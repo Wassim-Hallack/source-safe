@@ -14,8 +14,8 @@ class GroupController extends Controller
         $groups = User::find($user['id'])->groups;
 
         return response()->json([
-            'message' => 'success',
-            'groups' => $groups,
+            'status' => true,
+            'response' => $groups,
         ], 200);
     }
 }

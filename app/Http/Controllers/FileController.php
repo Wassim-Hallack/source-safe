@@ -15,8 +15,8 @@ class FileController extends Controller
         $files = Group::find($group_id)->files;
 
         return response()->json([
-            'message' => 'success',
-            'files' => $files,
+            'status' => true,
+            'response' => $files,
         ], 200);
     }
 }

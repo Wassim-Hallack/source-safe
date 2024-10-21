@@ -23,9 +23,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => "There is something incorrect",
-                'errors' => $validator->errors()
-            ], 422);
+                'response' => "There is something wrong.",
+            ], 400);
         }
 
         $user = User::where('email', $data['email'])->first();
@@ -47,13 +46,14 @@ class UserController extends Controller
             $success['name'] = $user->name;
 
             return response()->json([
-                'message' => 'User registered successfully',
-                'userWithToken' => $success
+                'status' =>  true,
+                'response' => $success['token']
             ], 200);
         } else {
             return response()->json([
-                'message' => 'You already have an account. Please login.',
-            ], 409);
+                'status' => false,
+                'response' => "There is something wrong.",
+            ], 400);
         }
     }
 
@@ -61,17 +61,17 @@ class UserController extends Controller
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->plainTextToken;
-            $success['name'] = $user->name;
-            $success['message'] = 'User logged in successfully';
+            $success = $user->createToken('MyApp')->plainTextToken;
 
             return response()->json([
-                'data' => $success,
+                'status' => true,
+                'response' => $success,
             ], 200);
         } else {
             return response()->json([
-                'message' => 'Your email or password is not correct'
-            ], 401);
+                'status' => false,
+                'response' => "There is something wrong.",
+            ], 400);
         }
     }
 
@@ -80,11 +80,13 @@ class UserController extends Controller
         try {
             Auth::user()->tokens()->delete();
             return response()->json([
-                'message' => 'Successfully logged out',
+                'status' => true,
+                'response' => "Logged out successfully.",
             ], 200);
         } catch (\Throwable $e) {
             return response()->json([
-                'message' => $e
+                'status' => false,
+                'response' => "There is something wrong.",
             ], 400);
         }
     }
