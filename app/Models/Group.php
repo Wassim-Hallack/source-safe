@@ -9,6 +9,10 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function files()
     {
         return $this->belongsToMany(File::class, 'group_files');

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class GroupFile extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'group_id',
+        'file_id'
+    ];
 }

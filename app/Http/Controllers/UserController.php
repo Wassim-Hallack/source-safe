@@ -23,7 +23,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'response' => "There is something wrong.",
+                'response' => "There is something wrong with some fields.",
             ], 400);
         }
 
@@ -43,7 +43,6 @@ class UserController extends Controller
             ]);
 
             $success['token'] = $user->createToken('MyApp')->plainTextToken;
-            $success['name'] = $user->name;
 
             return response()->json([
                 'status' =>  true,
@@ -89,5 +88,13 @@ class UserController extends Controller
                 'response' => "There is something wrong.",
             ], 400);
         }
+    }
+
+    public function get_users() {
+        $users = User::get();
+        return response([
+            'status' => true,
+            'response' => $users
+        ], 200);
     }
 }

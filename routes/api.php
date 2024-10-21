@@ -23,6 +23,7 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(UserController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::get('get_users', 'get_users');
     Route::post('logout', 'logout');
 });
 
@@ -32,6 +33,7 @@ Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix(
 
 Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {
     Route::get('get', 'get');
+    Route::post('add', 'add');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

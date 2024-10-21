@@ -10,4 +10,8 @@ class UserFile extends Model
     use HasFactory;
 
     protected $table = 'user_file';
+    protected $fillable = [
+        'user_id',
+        'file_id'
+    ];
 }
