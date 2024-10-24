@@ -11,7 +11,8 @@ class File extends Model
 
     protected $fillable = [
         'name',
-        'isFree'
+        'isFree',
+        'group_id'
     ];
 
     public function users()
@@ -19,8 +20,8 @@ class File extends Model
         return $this->belongsToMany(User::class, 'user_file');
     }
 
-    public function groups()
+    public function group()
     {
-        return $this->belongsToMany(Group::class, 'group_files');
+        return $this->belongsTo(Group::class);
     }
 }

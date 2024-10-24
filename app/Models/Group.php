@@ -11,15 +11,16 @@ class Group extends Model
 
     protected $fillable = [
         'name',
+        'user_id'
     ];
 
     public function files()
     {
-        return $this->belongsToMany(File::class, 'group_files');
+        return $this->hasMany(File::class);
     }
 
     public function user()
     {
-        return $this->belongsToMany(User::class, 'user_groups');
+        return $this->belongsTo(User::class, 'user_groups');
     }
 }

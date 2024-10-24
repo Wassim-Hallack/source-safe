@@ -18,6 +18,7 @@ class FileFactory extends Factory
      */
 
     protected $model = File::class;
+
     public function definition(): array
     {
         $fileName = $this->faker->word . '.txt';
@@ -26,6 +27,7 @@ class FileFactory extends Factory
 
         return [
             'name' => $fileName,
+            'group_id' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

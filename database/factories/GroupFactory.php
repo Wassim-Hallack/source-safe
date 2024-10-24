@@ -17,10 +17,12 @@ class GroupFactory extends Factory
      */
 
     protected $model = Group::class;
+
     public function definition(): array
     {
         return [
             'name' => fake()->name(),
+            'user_id' => $this->faker->numberBetween(1, 3),
         ];
     }
 }

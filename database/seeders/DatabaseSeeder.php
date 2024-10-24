@@ -7,7 +7,6 @@ use App\Models\File;
 use App\Models\Group;
 use App\Models\GroupFile;
 use App\Models\UserFile;
-use App\Models\UserGroup;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -37,19 +36,17 @@ class DatabaseSeeder extends Seeder
             'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
         ]);
 
-        File::factory(100)->create();
         Group::factory(10)->create();
+        File::factory(100)->create();
 
-        // Create relations files with at least one group
-        $files = File::get();
-        foreach ($files as $file) {
-            GroupFile::factory()->create([
-                'file_id' => $file->id,
-                'group_id' => Group::inRandomOrder()->first()->id,
-            ]);
-        }
-
-        UserGroup::factory(15)->create();
+//        // Create relations files with at least one group
+//        $files = File::get();
+//        foreach ($files as $file) {
+//            GroupFile::factory()->create([
+//                'file_id' => $file->id,
+//                'group_id' => Group::inRandomOrder()->first()->id,
+//            ]);
+//        }
 
         // Create relations for 35 files with at least one user
 //        $filesWithRelations = File::inRandomOrder()->take(35)->get();

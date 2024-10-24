@@ -28,6 +28,7 @@ Route::controller(UserController::class)->middleware(['auth:sanctum'])->group(fu
 });
 
 Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix('group')->group(function () {
+    Route::post('create', 'create');
     Route::get('get', 'get');
 });
 
