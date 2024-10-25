@@ -49,8 +49,13 @@ class User extends Authenticatable
         return $this->belongsToMany(File::class, 'user_file');
     }
 
+    // Return groups created by the user
     public function groups()
     {
         return $this->hasMany(Group::class);
+    }
+
+    public function groups_user_in() {
+        return $this->belongsToMany(Group::class, 'user_groups');
     }
 }

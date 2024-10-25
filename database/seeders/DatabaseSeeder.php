@@ -6,7 +6,7 @@ namespace Database\Seeders;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\GroupFile;
-use App\Models\UserFile;
+use App\Models\UserGroup;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Group::factory(10)->create();
+        UserGroup::factory(15)->create();
         File::factory(100)->create();
 
 //        // Create relations files with at least one group

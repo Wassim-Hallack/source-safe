@@ -23,13 +23,14 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(UserController::class)->middleware(['auth:sanctum'])->group(function () {
-    Route::get('get_users', 'get_users');
     Route::post('logout', 'logout');
 });
 
 Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix('group')->group(function () {
     Route::post('create', 'create');
     Route::get('get', 'get');
+    Route::get('users_out_group', 'users_out_group');
+    Route::post('invite_member', 'invite_member');
 });
 
 Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {
