@@ -89,8 +89,18 @@ class GroupService
         ], 200);
     }
 
-    public function invite_member(Request $request) {
+    public function invite_member(Request $request)
+    {
         $logged_in_user = Auth::user();
-        return $logged_in_user;
+        $group_id = $request['group_id'];
+        $user_id = $request['user_id'];
+
+        $group = Group::find($group_id);
+        if ($group['user_id'] !== $logged_in_user['id']) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The logged in user is not the admin of this group.'
+            ], 400);
+        }
     }
 }
