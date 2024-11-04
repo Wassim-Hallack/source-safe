@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\Group;
 use App\Models\GroupFile;
 use App\Models\GroupInvitation;
+use App\Models\UserFile;
 use App\Models\UserGroup;
 use Database\Factories\GroupInvitationFactory;
 use Illuminate\Database\Seeder;
@@ -40,8 +41,9 @@ class DatabaseSeeder extends Seeder
 
         Group::factory(10)->create();
         UserGroup::factory(15)->create();
-        File::factory(100)->create();
         GroupInvitation::factory(7)->create();
+        File::factory(100)->create();
+        UserFile::factory(50)->create();
 
 //        // Create relations files with at least one group
 //        $files = File::get();

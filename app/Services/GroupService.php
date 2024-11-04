@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Group;
 use App\Models\User;
+use App\Repositories\GroupInvitationRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserGroupRepository;
 use App\Repositories\UserRepository;
@@ -87,20 +88,5 @@ class GroupService
             'status' => true,
             'response' => $filtered_users,
         ], 200);
-    }
-
-    public function invite_member(Request $request)
-    {
-        $logged_in_user = Auth::user();
-        $group_id = $request['group_id'];
-        $user_id = $request['user_id'];
-
-        $group = Group::find($group_id);
-        if ($group['user_id'] !== $logged_in_user['id']) {
-            return response()->json([
-                'status' => false,
-                'message' => 'The logged in user is not the admin of this group.'
-            ], 400);
-        }
     }
 }

@@ -20,8 +20,20 @@ class GroupFactory extends Factory
 
     public function definition(): array
     {
+        $name = fake()->name();
+        $is_exists = Group::where('name', $name)->exists();
+        while(true) {
+            if(!$is_exists) {
+                break;
+            }
+            else {
+                $name = fake()->name();
+                $is_exists = Group::where('name', $name)->exists();
+            }
+        }
+
         return [
-            'name' => fake()->name(),
+            'name' => $name,
             'user_id' => $this->faker->numberBetween(1, 3),
         ];
     }

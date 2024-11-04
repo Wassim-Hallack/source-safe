@@ -18,6 +18,7 @@ class UserFileFactory extends Factory
      */
 
     protected $model = UserFile::class;
+
     public function definition(): array
     {
         $freeFile = File::where('isFree', true)->inRandomOrder()->first();
@@ -26,9 +27,13 @@ class UserFileFactory extends Factory
             return [];
         }
 
+        $freeFile['isFree'] = true;
+        $freeFile->save();
+
+
         return [
-//            'user_id' => $this->faker->numberBetween(1, 3),
-//            'file_id' => $freeFile->id,
+            'user_id' => $this->faker->numberBetween(1, 3),
+            'file_id' => $freeFile->id,
         ];
     }
 }

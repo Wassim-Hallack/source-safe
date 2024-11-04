@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\File;
+use App\Models\Group;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,13 +22,29 @@ class FileFactory extends Factory
 
     public function definition(): array
     {
-        $fileName = $this->faker->word . '.txt';
+        $group_id = $this->faker->numberBetween(1, 10);
+        $group = Group::find($group_id);
         $fileContent = $this->faker->paragraph;
-        Storage::disk('local')->put($fileName, $fileContent);
+
+        $fileName = $this->faker->word . '.txt';
+        while (true) {
+            $is_exists = File::where('name', $fileName)
+                ->where('group_id', $group_id)
+                ->exists();
+
+            if (!$is_exists) {
+                break;
+            } else {
+                $fileName = $this->faker->word . '.txt';
+            }
+        }
+
+        $filePath = "app/" . $group['name'] . "/" . $fileName;
+        Storage::put($filePath, $fileContent);
 
         return [
             'name' => $fileName,
-            'group_id' => $this->faker->numberBetween(1, 10),
+            'group_id' => $group_id,
         ];
     }
 }

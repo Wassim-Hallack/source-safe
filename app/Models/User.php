@@ -44,11 +44,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function files()
-    {
-        return $this->belongsToMany(File::class, 'user_file');
-    }
-
     // Return groups created by the user
     public function groups()
     {
@@ -63,5 +58,10 @@ class User extends Authenticatable
     public function groups_to_join()
     {
         return $this->belongsToMany(Group::class, 'group_invitations');
+    }
+
+    public function files()
+    {
+        return $this->belongsToMany(File::class, 'user_files');
     }
 }

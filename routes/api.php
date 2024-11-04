@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupInvitationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -30,7 +31,11 @@ Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix(
     Route::post('create', 'create');
     Route::get('get', 'get');
     Route::get('users_out_group', 'users_out_group');
-    Route::post('invite_member', 'invite_member');
+});
+
+Route::controller(GroupInvitationController::class)->middleware(['auth:sanctum'])->prefix('group_invitation')->group(function () {
+    Route::post('create', 'create');
+    Route::post('accept', 'accept');
 });
 
 Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {

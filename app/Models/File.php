@@ -15,13 +15,13 @@ class File extends Model
         'group_id'
     ];
 
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'user_file');
-    }
-
     public function group()
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_files');
     }
 }

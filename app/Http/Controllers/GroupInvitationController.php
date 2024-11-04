@@ -15,6 +15,10 @@ class GroupInvitationController extends Controller
         $this->groupInvitationService = $groupInvitationService;
     }
 
+    public function accept(Request $request) {
+        return $this->groupInvitationService->accept($request);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -26,9 +30,9 @@ class GroupInvitationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        return $this->groupInvitationService->create($request);
     }
 
     /**

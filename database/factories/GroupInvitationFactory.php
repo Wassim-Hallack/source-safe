@@ -18,12 +18,12 @@ class GroupInvitationFactory extends Factory
      */
     public function definition(): array
     {
-        while(true) {
+        while (true) {
             $user_id = $this->faker->numberBetween(1, 3);
             $group_id = $this->faker->numberBetween(1, 10);
-            $tmp = UserGroup::where('user_id', $user_id)->where('group_id', $group_id)->get();
+            $tmp = UserGroup::where('user_id', $user_id)->where('group_id', $group_id)->exists();
 
-            if(isEmpty($tmp)) {
+            if (!$tmp) {
                 return [
                     'user_id' => $user_id,
                     'group_id' => $group_id,
