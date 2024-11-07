@@ -4,15 +4,13 @@ namespace App\Services;
 
 use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileGetRequest;
-use App\Models\File;
 use App\Models\Group;
-use App\Models\GroupFile;
-use App\Models\User;
-use App\Models\UserGroup;
+use App\Repositories\AddFileRequestRepository;
+use App\Repositories\AddFileRequestToUserRepository;
 use App\Repositories\FileRepository;
+use App\Repositories\UserFileRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class FileService
 {
@@ -37,27 +35,10 @@ class FileService
     public function add(FileAddRequest $request)
     {
         $data = $request->all();
-        if (($data['file_status'][0] !== "0" && $data['file_status'][0] !== "1")) {
-            return response()->json([
-                'status' => false,
-                'response' => 'There is something wrong in file_status field.'
-            ], 400);
-        }
+        $logged_in_user = Auth::user();
 
         $data['file_status'] = $data['file_status'][0];
         $data['file_status'] = (boolean)$data['file_status'];
-
-        $validator = Validator::make($data, [
-            'file' => ['required', 'mimes:txt,pdf', 'max:2048'],
-            'file_status' => ['required', 'boolean'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'response' => "There is something wrong in some fields.",
-            ], 400);
-        }
 
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
@@ -65,57 +46,50 @@ class FileService
         $group_id = $data['group_id'];
         $user_id = $data['user_id'];
 
-        $user = User::find($user_id);
-        if ($user === null) {
-            return response()->json([
-                'status' => false,
-                'response' => "There is no user with this id.",
-            ], 400);
-        }
-
         $group = Group::find($group_id);
-        if ($group) {
-            $files_in_the_same_group = $group->files->pluck('name')->toArray();
+        if ($group['user_id'] === $logged_in_user['id']) {
+            $file_path = 'Groups/' . $group['name'] . "/" . $file_name;
+            $file->storeAs($file_path, "1");
 
-            if (in_array($file_name, $files_in_the_same_group)) {
-                return response()->json([
-                    'status' => false,
-                    'response' => 'There is file with the same name in this group.'
-                ], 400);
+            $file_data['name'] = $file_name;
+            $file_data['group_id'] = $group_id;
+
+            if (!$file_status) {
+                $file_data['isFree'] = false;
+                $file_record = $this->fileRepository->create($file_data);
+
+                $user_file_data['user_id'] = $user_id;
+                $user_file_data['file_id'] = $file_record['id'];
+                (new UserFileRepository())->create($user_file_data);
             } else {
-                $file->move(storage_path('app'), $file_name);
-                if ($file_status) {
-                    $file_record = File::create([
-                        'name' => $file_name,
-                        'isFree' => true
-                    ]);
+                $file_data['isFree'] = true;
+                $this->fileRepository->create($file_data);
+            }
+        } else {
+            $add_file_request_data['group_id'] = $group_id;
+            $add_file_request_data['name'] = $file_name;
 
-                    UserFile::create([
-                        'user_id' => $user_id,
-                        'file_id' => $file_record['id']
-                    ]);
-                } else {
-                    $file_record = File::create([
-                        'name' => $file_name,
-                        'isFree' => false,
-                    ]);
-                }
+            if ($file_status) {
+                $add_file_request_data['isFree'] = false;
+                $add_file_request_record = (new AddFileRequestRepository())->create($add_file_request_data);
 
-                GroupFile::create([
-                    'group_id' => $group_id,
-                    'file_id' => $file_record['id']
-                ]);
-
-                return response()->json([
-                    'status' => true,
-                    'response' => 'The file saved successfully.'
-                ], 200);
+                $add_file_request_to_user_data['add_file_request_id'] = $add_file_request_record['id'];
+                $add_file_request_to_user_data['user_id'] = $user_id;
+                (new AddFileRequestToUserRepository())->create($add_file_request_to_user_data);
+            } else {
+                $add_file_request_data['isFree'] = true;
+                (new AddFileRequestRepository())->create($add_file_request_data);
             }
         }
 
         return response()->json([
-            'status' => false,
-            'response' => 'Group not found.'
-        ], 400);
+            'status' => true,
+            'response' => 'The file saved successfully.'
+        ], 200);
+    }
+
+    public function destroy(Request $request)
+    {
+        return "OK";
     }
 }

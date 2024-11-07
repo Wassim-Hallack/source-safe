@@ -27,7 +27,13 @@ class FileController extends Controller
         return $this->fileService->get($request);
     }
 
-    public function add(FileAddRequest $request) {
+    public function add(FileAddRequest $request)
+    {
         return $this->fileService->add($request);
+    }
+
+    public function destroy(Request $request)
+    {
+        return $this->fileService->destroy($request);
     }
 }

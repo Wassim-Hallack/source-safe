@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GroupInvitationResponseRequest;
 use App\Models\GroupInvitation;
 use App\Services\GroupInvitationService;
 use Illuminate\Http\Request;
@@ -15,8 +16,8 @@ class GroupInvitationController extends Controller
         $this->groupInvitationService = $groupInvitationService;
     }
 
-    public function accept(Request $request) {
-        return $this->groupInvitationService->accept($request);
+    public function invitation_response(GroupInvitationResponseRequest $request) {
+        return $this->groupInvitationService->invitation_response($request);
     }
 
     /**

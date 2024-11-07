@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Requests\GroupInvitationResponseRequest;
 use App\Models\Group;
 use App\Models\GroupInvitation;
 use App\Models\UserGroup;
@@ -53,36 +54,37 @@ class GroupInvitationService
         ], 400);
     }
 
-    public function accept(Request $request)
+    public function invitation_response(GroupInvitationResponseRequest $request)
     {
         $group_id = $request['group_id'];
+        $response = $request['response'];
         $user = Auth::user();
 
         $invitation = GroupInvitation::where('user_id', $user['id'])
             ->where('group_id', $group_id)
             ->get();
-        if (!count($invitation)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'There is no invitation for this user to this group.'
-            ], 400);
-        }
 
         $invitation = $invitation->first();
         $this->groupInvitationRepository->delete($invitation);
 
-        $is_exists = UserGroup::where('user_id', $user['id'])
-            ->where('group_id', $group_id)
-            ->exists();
-        if (!$is_exists) {
-            $data['user_id'] = $invitation['user_id'];
-            $data['group_id'] = $invitation['group_id'];
-            (new UserGroupRepository)->create($data);
+        if ($response) {
+            $is_exists = UserGroup::where('user_id', $user['id'])
+                ->where('group_id', $group_id)
+                ->exists();
+            if (!$is_exists) {
+                $data['user_id'] = $invitation['user_id'];
+                $data['group_id'] = $invitation['group_id'];
+                (new UserGroupRepository)->create($data);
+            }
+
+            $response = 'You have joined to this group successfully.';
+        } else {
+            $response = 'You have rejected this invitation successfully.';
         }
 
         return response()->json([
             'status' => true,
-            'message' => 'You have joined to this group successfully.'
+            'response' => $response
         ], 200);
     }
 }

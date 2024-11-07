@@ -34,4 +34,9 @@ class Group extends Model
     {
         return $this->belongsToMany(User::class, 'group_invitations');
     }
+
+    public function add_file_requests()
+    {
+        return $this->hasMany(AddFileRequest::class);
+    }
 }

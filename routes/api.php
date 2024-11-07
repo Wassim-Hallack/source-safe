@@ -35,12 +35,13 @@ Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix(
 
 Route::controller(GroupInvitationController::class)->middleware(['auth:sanctum'])->prefix('group_invitation')->group(function () {
     Route::post('create', 'create');
-    Route::post('accept', 'accept');
+    Route::post('invitation_response', 'invitation_response');
 });
 
 Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {
     Route::get('get', 'get');
     Route::post('add', 'add');
+    Route::delete('destroy', 'destroy');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
