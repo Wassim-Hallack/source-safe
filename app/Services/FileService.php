@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Http\Requests\FileAddRequest;
+use App\Http\Requests\FileDestroyRequest;
 use App\Http\Requests\FileGetRequest;
+use App\Models\File;
 use App\Models\Group;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
@@ -88,8 +90,16 @@ class FileService
         ], 200);
     }
 
-    public function destroy(Request $request)
+    public function destroy(FileDestroyRequest $request)
     {
-        return "OK";
+        $file_id = $request['file_id'];
+        $file = File::find($file_id);
+
+        $this->fileRepository->delete($file);
+
+        return response()->json([
+            'status' => true,
+            'response' => 'The file deleted successfully.'
+        ], 200);
     }
 }
