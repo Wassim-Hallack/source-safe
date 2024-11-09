@@ -41,6 +41,7 @@ Route::controller(GroupInvitationController::class)->middleware(['auth:sanctum']
 Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {
     Route::get('get', 'get');
     Route::post('add', 'add');
+    Route::post('edit', 'edit');
     Route::delete('destroy', 'destroy');
 });
 

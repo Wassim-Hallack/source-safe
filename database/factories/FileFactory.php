@@ -39,7 +39,7 @@ class FileFactory extends Factory
             }
         }
 
-        $filePath = "Groups/" . $group['name'] . "/" . $fileName . "/1";
+        $filePath = "Groups/" . $group['name'] . "/" . $fileName . "/1.txt";
         Storage::put($filePath, $fileContent);
 
         return [

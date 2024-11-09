@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileDestroyRequest;
+use App\Http\Requests\FileEditRequest;
 use App\Http\Requests\FileGetRequest;
 use App\Models\File;
 use App\Models\Group;
@@ -31,6 +32,11 @@ class FileController extends Controller
     public function add(FileAddRequest $request)
     {
         return $this->fileService->add($request);
+    }
+
+    public function edit(FileEditRequest $request)
+    {
+        return $this->fileService->edit($request);
     }
 
     public function destroy(FileDestroyRequest $request)

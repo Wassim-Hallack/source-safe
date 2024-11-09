@@ -4,15 +4,18 @@ namespace App\Services;
 
 use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileDestroyRequest;
+use App\Http\Requests\FileEditRequest;
 use App\Http\Requests\FileGetRequest;
 use App\Models\File;
 use App\Models\Group;
+use App\Models\UserFile;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\UserFileRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File as LaravelFile;
 
 class FileService
 {
@@ -51,7 +54,8 @@ class FileService
         $group = Group::find($group_id);
         if ($group['user_id'] === $logged_in_user['id']) {
             $file_path = 'Groups/' . $group['name'] . "/" . $file_name;
-            $file->storeAs($file_path, "1");
+            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+            $file->storeAs($file_path, "1." . $file_extension);
 
             $file_data['name'] = $file_name;
             $file_data['group_id'] = $group_id;
@@ -88,6 +92,43 @@ class FileService
             'status' => true,
             'response' => 'The file saved successfully.'
         ], 200);
+    }
+
+    public function edit(FileEditRequest $request)
+    {
+        $data = $request->all();
+        $user = Auth::user();
+
+        $group_id = $data['group_id'];
+        $group = Group::find($group_id);
+        $file = $data['file'];
+        $file_name = $file->getClientOriginalName();
+
+        $file_record = File::where('name', $file_name)
+            ->where('group_id', $group_id)
+            ->where('isFree', false)
+            ->first();
+
+        $user_file = UserFile::where('user_id', $user['id'])
+            ->where('file_id', $file_record['id'])
+            ->first();
+
+        (new UserFileRepository())->delete($user_file);
+
+        $file_record['isFree'] = true;
+        $file_record->save();
+
+        $path = storage_path('app\\Groups\\' . $group['name'] . '\\' . $file_name);
+        $fileCount = count(LaravelFile::files($path));
+
+        $path = 'Groups/' . $group['name'] . "/" . $file_name;
+        $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        $file->storeAs($path, $fileCount . "." . $file_extension);
+
+        return response()->json([
+            'status' => true,
+            'response' => 'The file updated successfully.'
+        ]);
     }
 
     public function destroy(FileDestroyRequest $request)

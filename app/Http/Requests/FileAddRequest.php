@@ -49,13 +49,12 @@ class FileAddRequest extends FormRequest
             $user = User::find($user_id);
             if ($user === null) {
                 $this->failedAuthorizationResponse('There is no user with this id.');
-            }
-            else {
+            } else {
                 $is_exists = UserGroup::where('user_id', $user_id)
                     ->where('group_id', $group_id)
                     ->exists();
 
-                if(!$is_exists) {
+                if (!$is_exists) {
                     $this->failedAuthorizationResponse('This user does not belong to this group.');
                 }
 
@@ -64,7 +63,7 @@ class FileAddRequest extends FormRequest
                     ->where('group_id', $group_id)
                     ->exists();
 
-                if(!$is_exists) {
+                if (!$is_exists) {
                     $this->failedAuthorizationResponse('The logged-in user does not belong to this group.');
                 }
             }
@@ -81,7 +80,7 @@ class FileAddRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|mimes:txt,pdf|max:2048',
+            'file' => 'required|file|max:2048',
             'group_id' => 'required|integer|exists:groups,id'
         ];
     }
