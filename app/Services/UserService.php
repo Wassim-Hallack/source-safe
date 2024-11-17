@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
@@ -43,33 +44,43 @@ class UserService
 
         $user_data['name'] = $data['name'];
         $user_data['email'] = $data['email'];
-        $user_data['password'] = bcrypt($data['password']);
+        $user_data['password'] = Hash::make($data['password']);
         $user_data['image'] = $imageName;
 
-        $user = $this->userRepository->create($user_data);
+        $this->userRepository->create($user_data);
+
+//        return $this->respondWithToken($token);
 
         return response()->json([
             'status' => true,
-            'response' => $user->createToken('MyApp')->plainTextToken,
+            'response' => 'User registered successfully.',
         ], 200);
     }
 
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
+        $credentials = $request->only('email', 'password');
 
-            return response()->json([
-                'status' => true,
-                'response' => $user->createToken('MyApp')->plainTextToken,
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => false,
-                'response' => "There is something wrong.",
-            ], 400);
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    public function refresh()
+    {
+        try {
+            $newToken = JWTAuth::parseToken()->refresh();
+
+            return $this->respondWithToken($newToken);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['status' => false, 'response' => 'Token is invalid'], 400);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['status' => false, 'response' => 'Token is required'], 400);
         }
     }
+
 
     public function logout()
     {
@@ -85,5 +96,14 @@ class UserService
                 'response' => "There is something wrong.",
             ], 400);
         }
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'status' => true,
+            'access_token' => $token,
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+        ], 200);
     }
 }

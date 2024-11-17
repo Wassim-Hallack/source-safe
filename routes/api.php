@@ -23,22 +23,23 @@ Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login');
 });
 
-Route::controller(UserController::class)->middleware(['auth:sanctum'])->group(function () {
+Route::controller(UserController::class)->middleware(['auth:api'])->group(function () {
+    Route::post('refresh', 'refresh');
     Route::post('logout', 'logout');
 });
 
-Route::controller(GroupController::class)->middleware(['auth:sanctum'])->prefix('group')->group(function () {
+Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('group')->group(function () {
     Route::post('create', 'create');
     Route::get('get', 'get');
     Route::get('users_out_group', 'users_out_group');
 });
 
-Route::controller(GroupInvitationController::class)->middleware(['auth:sanctum'])->prefix('group_invitation')->group(function () {
+Route::controller(GroupInvitationController::class)->middleware(['auth:api'])->prefix('group_invitation')->group(function () {
     Route::post('create', 'create');
     Route::post('invitation_response', 'invitation_response');
 });
 
-Route::controller(FileController::class)->middleware(['auth:sanctum'])->prefix('file')->group(function () {
+Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file')->group(function () {
     Route::get('get', 'get');
     Route::post('add', 'add');
     Route::post('edit', 'edit');

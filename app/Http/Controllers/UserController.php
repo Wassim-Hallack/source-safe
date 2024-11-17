@@ -30,6 +30,11 @@ class UserController extends Controller
         return $this->userService->login($request);
     }
 
+    public function refresh(Request $request)
+    {
+        return $this->userService->refresh($request);
+    }
+
     public function logout()
     {
         return $this->userService->logout();
