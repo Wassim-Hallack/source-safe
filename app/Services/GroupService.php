@@ -54,7 +54,7 @@ class GroupService
     public function get()
     {
         $user = Auth::user();
-        $groups = User::with('groups_user_in.user')->find($user['id'])->groups_user_in;
+        $groups = User::with('groups_user_in:id,name,user_id','groups_user_in.user:id,email,name')->find($user['id'])->groups_user_in;
 
         return response()->json([
             'status' => true,
