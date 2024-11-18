@@ -42,12 +42,12 @@ class FileService
         $data = $request->all();
         $logged_in_user = Auth::user();
 
-        $data['file_status'] = $data['file_status'][0];
-        $data['file_status'] = (boolean)$data['file_status'];
+        $data['isFree'] = $data['isFree'][0];
+        $data['isFree'] = (boolean)$data['isFree'];
 
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
-        $file_status = $data['file_status'];
+        $isFree = $data['isFree'];
         $group_id = $data['group_id'];
         $user_id = $data['user_id'];
 
@@ -60,7 +60,7 @@ class FileService
             $file_data['name'] = $file_name;
             $file_data['group_id'] = $group_id;
 
-            if (!$file_status) {
+            if (!$isFree) {
                 $file_data['isFree'] = false;
                 $file_record = $this->fileRepository->create($file_data);
 
@@ -75,7 +75,7 @@ class FileService
             $add_file_request_data['group_id'] = $group_id;
             $add_file_request_data['name'] = $file_name;
 
-            if ($file_status) {
+            if (!$isFree) {
                 $add_file_request_data['isFree'] = false;
                 $add_file_request_record = (new AddFileRequestRepository())->create($add_file_request_data);
 

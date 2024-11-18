@@ -18,15 +18,15 @@ class FileAddRequest extends FormRequest
     public function authorize(): bool
     {
         $data = $this->all();
-        if (($data['file_status'][0] !== "0" && $data['file_status'][0] !== "1")) {
+        if (($data['isFree'][0] !== "0" && $data['isFree'][0] !== "1")) {
             $this->failedAuthorizationResponse('There is something wrong in file_status field.');
         }
 
-        $data['file_status'] = $data['file_status'][0];
-        $data['file_status'] = (boolean)$data['file_status'];
+        $data['isFree'] = $data['isFree'][0];
+        $data['isFree'] = (boolean)$data['isFree'];
 
         $validator = Validator::make($data, [
-            'file_status' => ['required', 'boolean'],
+            'isFree' => ['required', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -36,7 +36,7 @@ class FileAddRequest extends FormRequest
         $group_id = $data['group_id'];
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
-        $file_status = $data['file_status'];
+        $isFree = $data['isFree'];
         $user_id = $data['user_id'];
 
         $group = Group::find($group_id);
@@ -45,7 +45,7 @@ class FileAddRequest extends FormRequest
             $this->failedAuthorizationResponse('There is file with the same name in this group.');
         }
 
-        if ($file_status) {
+        if (!$isFree) {
             $user = User::find($user_id);
             if ($user === null) {
                 $this->failedAuthorizationResponse('There is no user with this id.');
