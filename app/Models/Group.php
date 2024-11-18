@@ -22,7 +22,7 @@ class Group extends Model
     // Return the admin of the group
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_groups');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function users_group_in()
