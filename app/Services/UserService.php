@@ -24,7 +24,7 @@ class UserService
         $validator = Validator::make($data, [
             'name' => ['required', 'max:250'],
             'email' => ['required', 'email', 'max:250', 'unique:users,email'],
-            'image' => ['required', 'image', 'mimes:png,jpg,jpeg,gif', 'max:10240'],
+            'image' => ['image', 'mimes:png,jpg,jpeg,gif', 'max:10240'],
             'password' => ['required', 'max:250'],
             'password_confirmation' => ['required', 'same:password']
         ]);
