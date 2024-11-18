@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Group extends Model
 {
@@ -13,6 +14,8 @@ class Group extends Model
         'name',
         'user_id'
     ];
+
+    protected $appends = ['is_owner'];
 
     public function files()
     {
@@ -38,5 +41,11 @@ class Group extends Model
     public function add_file_requests()
     {
         return $this->hasMany(AddFileRequest::class);
+    }
+
+    // Accessor to check if the authenticated user is the owner
+    public function getIsOwnerAttribute()
+    {
+        return Auth::check() && Auth::id() === $this->user_id;
     }
 }
