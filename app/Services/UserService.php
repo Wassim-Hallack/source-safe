@@ -49,8 +49,6 @@ class UserService
 
         $this->userRepository->create($user_data);
 
-//        return $this->respondWithToken($token);
-
         return response()->json([
             'status' => true,
             'response' => 'User registered successfully.',
@@ -65,7 +63,14 @@ class UserService
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = Auth::user();
+
+        return response()->json([
+            'status' => true,
+            'access_token' => $token,
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'user_data' => $user
+        ], 200);
     }
 
     public function refresh()
@@ -73,14 +78,17 @@ class UserService
         try {
             $newToken = JWTAuth::parseToken()->refresh();
 
-            return $this->respondWithToken($newToken);
+            return response()->json([
+                'status' => true,
+                'access_token' => $newToken,
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+            ], 200);
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
             return response()->json(['status' => false, 'response' => 'Token is invalid'], 400);
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['status' => false, 'response' => 'Token is required'], 400);
         }
     }
-
 
     public function logout()
     {
@@ -96,14 +104,5 @@ class UserService
                 'response' => "There is something wrong.",
             ], 400);
         }
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'status' => true,
-            'access_token' => $token,
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-        ], 200);
     }
 }
