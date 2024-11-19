@@ -36,15 +36,15 @@ class UserService
         }
 
 
-        $image = $data['image'];
-        $ext = $image->getClientOriginalExtension();
-        $imageName = time() . '.' . $ext;
-        $image->move(public_path() . '/images/profilePhotos/', $imageName);
+//        $image = $data['image'];
+//        $ext = $image->getClientOriginalExtension();
+//        $imageName = time() . '.' . $ext;
+//        $image->move(public_path() . '/images/profilePhotos/', $imageName);
 
         $user_data['name'] = $data['name'];
         $user_data['email'] = $data['email'];
         $user_data['password'] = Hash::make($data['password']);
-        $user_data['image'] = $imageName;
+//        $user_data['image'] = $imageName;
 
         $this->userRepository->create($user_data);
 
