@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Group;
 use App\Models\User;
+use App\Models\UserGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,6 +27,13 @@ class UserGroupFactory extends Factory
         static $index = -1;
 
         if ($index === -1) {
+            for($i = 1; $i <= 10; $i++) {
+                UserGroup::create([
+                    'user_id' => 4,
+                    'group_id' => $i
+                ]);
+            }
+
             for ($i = 0; $i < count($users); $i++) {
                 for ($j = 0; $j < count($groups); $j++) {
                     $staticPairs[] = [

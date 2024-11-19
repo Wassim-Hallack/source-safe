@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AddFileRequest;
+use App\Models\AddFileRequestToUser;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\GroupFile;
@@ -38,39 +40,36 @@ class DatabaseSeeder extends Seeder
             'name' => 'wassim3',
             'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
         ]);
+        User::create([
+            'email' => 'wassim4@gmail.com',
+            'password' => bcrypt('123456'),
+            'name' => 'wassim3',
+            'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
+        ]);
 
         Group::factory(10)->create();
         UserGroup::factory(15)->create();
         GroupInvitation::factory(7)->create();
         File::factory(100)->create();
         UserFile::factory(50)->create();
+        $add_file_requests = AddFileRequest::factory(20)->create();
 
-//        // Create relations files with at least one group
-//        $files = File::get();
-//        foreach ($files as $file) {
-//            GroupFile::factory()->create([
-//                'file_id' => $file->id,
-//                'group_id' => Group::inRandomOrder()->first()->id,
-//            ]);
-//        }
+        foreach ($add_file_requests as $add_file_request) {
+            if (!$add_file_request['isFree']) {
+                while (true) {
+                    $user_id = 4;
+                    $exists = UserGroup::where('user_id', $user_id)->where('group_id', $add_file_request['group_id'])->exists();
 
-        // Create relations for 35 files with at least one user
-//        $filesWithRelations = File::inRandomOrder()->take(35)->get();
-//        foreach ($filesWithRelations as $file) {
-//            UserFile::factory()->create([
-//                'file_id' => $file->id,
-//                'user_id' => User::inRandomOrder()->first()->id,
-//            ]);
-//
-//            $file['isFree'] = false;
-//            $file->save();
-//        }
+                    if ($exists) {
+                        AddFileRequestToUser::create([
+                            'add_file_request_id' => $add_file_request['id'],
+                            'user_id' => $user_id
+                        ]);
 
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
