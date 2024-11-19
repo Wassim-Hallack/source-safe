@@ -24,9 +24,9 @@ class FileFactory extends Factory
     {
         $group_id = $this->faker->numberBetween(1, 10);
         $group = Group::find($group_id);
-        $fileContent = $this->faker->paragraph;
 
-        $fileName = $this->faker->word . '.txt';
+        $fileContent = $this->faker->paragraph;
+        $fileName = $this->faker->name() . '.txt';
         while (true) {
             $is_exists = File::where('name', $fileName)
                 ->where('group_id', $group_id)

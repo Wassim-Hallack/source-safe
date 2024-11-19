@@ -72,6 +72,10 @@ class FileService
                 $this->fileRepository->create($file_data);
             }
         } else {
+            $file_path = 'Add File Requests/' . $group['name'] . "/" . $file_name;
+            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+            $file->storeAs($file_path, "1." . $file_extension);
+
             $add_file_request_data['group_id'] = $group_id;
             $add_file_request_data['name'] = $file_name;
 

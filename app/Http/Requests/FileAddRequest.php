@@ -27,6 +27,8 @@ class FileAddRequest extends FormRequest
 
         $validator = Validator::make($data, [
             'isFree' => ['required', 'boolean'],
+            'file' => 'required|file|max:2048',
+            'group_id' => 'required|integer|exists:groups,id'
         ]);
 
         if ($validator->fails()) {
@@ -80,8 +82,7 @@ class FileAddRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|max:2048',
-            'group_id' => 'required|integer|exists:groups,id'
+            //
         ];
     }
 
