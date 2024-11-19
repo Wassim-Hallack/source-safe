@@ -51,7 +51,7 @@ class GroupInvitationService
         return response()->json([
             'status' => true,
             'message' => 'The invitation has send successfully.'
-        ], 400);
+        ], 200);
     }
 
     public function invitation_response(GroupInvitationResponseRequest $request)
