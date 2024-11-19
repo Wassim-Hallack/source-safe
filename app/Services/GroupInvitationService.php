@@ -87,4 +87,16 @@ class GroupInvitationService
             'response' => $response
         ], 200);
     }
+
+    public function myInvitation()
+    {
+        $user = Auth::user();
+
+        $invitation = GroupInvitation::where('user_id', $user['id'])
+            ->get();
+        return response()->json([
+            'status' => true,
+            'response' => $invitation
+        ], 200);
+    }
 }

@@ -38,6 +38,7 @@ Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('gro
 Route::controller(GroupInvitationController::class)->middleware(['auth:api'])->prefix('group_invitation')->group(function () {
     Route::post('create', 'create');
     Route::post('invitation_response', 'invitation_response');
+    Route::get('get', 'index');
 });
 
 Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file')->group(function () {

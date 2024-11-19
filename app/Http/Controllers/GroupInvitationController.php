@@ -29,7 +29,9 @@ class GroupInvitationController extends Controller
      */
     public function index()
     {
-        //
+        return $this->logExecution(function ()  {
+            return $this->groupInvitationService->myInvitation();
+        }, __FUNCTION__);
     }
 
     /**
