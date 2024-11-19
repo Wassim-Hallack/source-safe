@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Group;
-use App\Models\GroupFile;
-use App\Models\User;
 use App\Services\GroupService;
+use App\Traits\LogExecutionTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class GroupController extends Controller
 {
+    use LogExecutionTrait;
+
     protected $groupService;
 
     public function __construct(GroupService $groupService)
@@ -21,19 +19,29 @@ class GroupController extends Controller
 
     public function create(Request $request)
     {
-        return $this->groupService->create($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->groupService->create($request);
+        }, __FUNCTION__, $request->all());
     }
 
     public function get()
     {
-        return $this->groupService->get();
+        return $this->logExecution(function () {
+            return $this->groupService->get();
+        }, __FUNCTION__);
     }
 
-    public function users_out_group(Request $request) {
-        return $this->groupService->users_out_group($request);
+    public function users_out_group(Request $request)
+    {
+        return $this->logExecution(function () use ($request) {
+            return $this->groupService->users_out_group($request);
+        }, __FUNCTION__, $request->all());
     }
 
-    public function invite_member(Request $request) {
-        return $this->groupService->invite_member($request);
+    public function invite_member(Request $request)
+    {
+        return $this->logExecution(function () use ($request) {
+            return $this->groupService->invite_member($request);
+        }, __FUNCTION__, $request->all());
     }
 }

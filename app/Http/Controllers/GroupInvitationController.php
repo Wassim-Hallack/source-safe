@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GroupInvitationResponseRequest;
 use App\Models\GroupInvitation;
 use App\Services\GroupInvitationService;
+use App\Traits\LogExecutionTrait;
 use Illuminate\Http\Request;
 
 class GroupInvitationController extends Controller
 {
+    use LogExecutionTrait;
     protected $groupInvitationService;
 
     public function __construct(GroupInvitationService $groupInvitationService)
@@ -17,7 +19,9 @@ class GroupInvitationController extends Controller
     }
 
     public function invitation_response(GroupInvitationResponseRequest $request) {
-        return $this->groupInvitationService->invitation_response($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->groupInvitationService->invitation_response($request);
+        }, __FUNCTION__, $request->all());
     }
 
     /**

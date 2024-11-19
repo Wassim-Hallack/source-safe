@@ -6,17 +6,13 @@ use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileDestroyRequest;
 use App\Http\Requests\FileEditRequest;
 use App\Http\Requests\FileGetRequest;
-use App\Models\File;
-use App\Models\Group;
-use App\Models\GroupFile;
-use App\Models\User;
 use App\Services\FileService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use App\Traits\LogExecutionTrait;
 
 class FileController extends Controller
 {
+    use LogExecutionTrait;
+
     protected FileService $fileService;
 
     public function __construct(FileService $fileService)
@@ -26,21 +22,29 @@ class FileController extends Controller
 
     public function get(FileGetRequest $request)
     {
-        return $this->fileService->get($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->fileService->get($request);
+        }, __FUNCTION__, $request->all());
     }
 
     public function add(FileAddRequest $request)
     {
-        return $this->fileService->add($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->fileService->add($request);
+        }, __FUNCTION__, $request->all());
     }
 
     public function edit(FileEditRequest $request)
     {
-        return $this->fileService->edit($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->fileService->edit($request);
+        }, __FUNCTION__, $request->all());
     }
 
     public function destroy(FileDestroyRequest $request)
     {
-        return $this->fileService->destroy($request);
+        return $this->logExecution(function () use ($request) {
+            return $this->fileService->destroy($request);
+        }, __FUNCTION__, $request->all());
     }
 }
