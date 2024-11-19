@@ -93,7 +93,7 @@ class GroupInvitationService
         $user = Auth::user();
 
         $invitation = GroupInvitation::where('user_id', $user['id'])
-            ->with('user')
+            ->with(['user' , 'group'])
             ->get();
         return response()->json([
             'status' => true,
