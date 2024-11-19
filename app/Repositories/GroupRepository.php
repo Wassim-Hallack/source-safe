@@ -6,23 +6,28 @@ use App\Models\Group;
 
 class GroupRepository
 {
-    public function get()
+    static public function get()
     {
         return Group::all();
     }
 
-    public function create($data)
+    static public function find($id)
+    {
+        return Group::find($id);
+    }
+
+    static public function create($data)
     {
         return Group::create($data);
     }
 
-    public function update($record, $data)
+    static public function update($record, $data)
     {
         $record->update($data);
         return $record;
     }
 
-    public function delete($record)
+    static public function delete($record)
     {
         $record->delete();
     }

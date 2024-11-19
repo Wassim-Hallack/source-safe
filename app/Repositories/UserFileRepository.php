@@ -6,24 +6,40 @@ use App\Models\UserFile;
 
 class UserFileRepository
 {
-    public function get()
+    static public function get()
     {
         return UserFile::all();
     }
 
-    public function create($data)
+    static public function create($data)
     {
         return UserFile::create($data);
     }
 
-    public function update($record, $data)
+    static public function update($record, $data)
     {
         $record->update($data);
         return $record;
     }
 
-    public function delete($record)
+    static public function delete($record)
     {
         $record->delete();
+    }
+
+    static public function findByConditions(array $conditions)
+    {
+        $query = UserFile::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->first();
     }
 }

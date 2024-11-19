@@ -7,26 +7,20 @@ use App\Models\Group;
 use App\Models\GroupInvitation;
 use App\Models\UserGroup;
 use App\Repositories\GroupInvitationRepository;
+use App\Repositories\GroupRepository;
 use App\Repositories\UserGroupRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GroupInvitationService
 {
-    protected GroupInvitationRepository $groupInvitationRepository;
-
-    public function __construct(GroupInvitationRepository $groupInvitationRepository)
-    {
-        $this->groupInvitationRepository = $groupInvitationRepository;
-    }
-
     public function create(Request $request)
     {
         $logged_in_user = Auth::user();
         $group_id = $request['group_id'];
         $user_id = $request['user_id'];
 
-        $group = Group::find($group_id);
+        $group = GroupRepository::find($group_id);
         if ($group['user_id'] !== $logged_in_user['id']) {
             return response()->json([
                 'status' => false,
@@ -34,9 +28,11 @@ class GroupInvitationService
             ], 400);
         }
 
-        $is_exists_previous_invitation = GroupInvitation::where('user_id', $user_id)
-            ->where('group_id', $group_id)
-            ->exists();
+        $conditions = [
+            'user_id' => $user_id,
+            'group_id' => $group_id
+        ];
+        $is_exists_previous_invitation = GroupInvitationRepository::existsByConditions($conditions);
         if ($is_exists_previous_invitation) {
             return response()->json([
                 'status' => false,
@@ -46,7 +42,7 @@ class GroupInvitationService
 
         $data['user_id'] = $user_id;
         $data['group_id'] = $group_id;
-        $this->groupInvitationRepository->create($data);
+        GroupInvitationRepository::create($data);
 
         return response()->json([
             'status' => true,
@@ -60,21 +56,20 @@ class GroupInvitationService
         $response = $request['response'];
         $user = Auth::user();
 
-        $invitation = GroupInvitation::where('user_id', $user['id'])
-            ->where('group_id', $group_id)
-            ->get();
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group_id
+        ];
+        $invitation = GroupInvitationRepository::findByConditions($conditions);
 
-        $invitation = $invitation->first();
-        $this->groupInvitationRepository->delete($invitation);
+        GroupInvitationRepository::delete($invitation);
 
         if ($response) {
-            $is_exists = UserGroup::where('user_id', $user['id'])
-                ->where('group_id', $group_id)
-                ->exists();
+            $is_exists = UserGroupRepository::existsByConditions($conditions);
             if (!$is_exists) {
                 $data['user_id'] = $invitation['user_id'];
                 $data['group_id'] = $invitation['group_id'];
-                (new UserGroupRepository)->create($data);
+                UserGroupRepository::create($data);
             }
 
             $response = 'You have joined to this group successfully.';
@@ -92,12 +87,13 @@ class GroupInvitationService
     {
         $user = Auth::user();
 
-        $invitation = GroupInvitation::where('user_id', $user['id'])
-            ->with(['group:id,name'])
-            ->get();
+        $conditions = ['user_id' => $user['id']];
+        $relations = ['group:id,name'];
+        $invitations = GroupInvitationRepository::getByConditionsWithRelations($conditions, $relations);
+
         return response()->json([
             'status' => true,
-            'response' => $invitation
+            'response' => $invitations
         ], 200);
     }
 }

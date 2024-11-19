@@ -11,13 +11,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
-    protected $userRepository;
-
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
     public function register(Request $request)
     {
         $data = $request->all();
@@ -46,7 +39,7 @@ class UserService
         $user_data['password'] = Hash::make($data['password']);
 //        $user_data['image'] = $imageName;
 
-        $this->userRepository->create($user_data);
+        UserRepository::create($user_data);
 
         return response()->json([
             'status' => true,

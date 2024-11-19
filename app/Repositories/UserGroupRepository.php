@@ -6,24 +6,40 @@ use App\Models\UserGroup;
 
 class UserGroupRepository
 {
-    public function get()
+    static public function get()
     {
         return UserGroup::all();
     }
 
-    public function create($data)
+    static public function create($data)
     {
         return UserGroup::create($data);
     }
 
-    public function update($record, $data)
+    static public function update($record, $data)
     {
         $record->update($data);
         return $record;
     }
 
-    public function delete($record)
+    static public function delete($record)
     {
         $record->delete();
+    }
+
+    static public function existsByConditions(array $conditions)
+    {
+        $query = UserGroup::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->exists();
     }
 }
