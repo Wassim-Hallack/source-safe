@@ -3,9 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Models\File;
+use App\Repositories\FileRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FileDestroyRequest extends FormRequest
 {
@@ -14,9 +16,17 @@ class FileDestroyRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $validator = Validator::make($this->all(), [
+            'file_id' => 'required|integer|exists:files,id',
+        ]);
+
+        if ($validator->fails()) {
+            $this->failedAuthorizationResponse('There is something wrong in some fields.');
+        }
+
         $user = Auth::user();
         $file_id = $this['file_id'];
-        $group = File::find($file_id)->group;
+        $group = FileRepository::find($file_id)->group;
 
         if ($group['user_id'] !== $user['id']) {
             $this->failedAuthorizationResponse('The logged-in user is not the admin of this group.');
@@ -33,7 +43,7 @@ class FileDestroyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file_id' => 'required|integer|exists:files,id',
+            //
         ];
     }
 

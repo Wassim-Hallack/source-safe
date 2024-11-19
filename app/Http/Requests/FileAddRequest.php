@@ -5,6 +5,9 @@ namespace App\Http\Requests;
 use App\Models\Group;
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Repositories\GroupRepository;
+use App\Repositories\UserGroupRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -17,15 +20,14 @@ class FileAddRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $data = $this->all();
-        if (($data['isFree'][0] !== "0" && $data['isFree'][0] !== "1")) {
+        if (($this['isFree'][0] !== "0" && $this['isFree'][0] !== "1")) {
             $this->failedAuthorizationResponse('There is something wrong in file_status field.');
         }
 
-        $data['isFree'] = $data['isFree'][0];
-        $data['isFree'] = (boolean)$data['isFree'];
+        $this['isFree'] = $this['isFree'][0];
+        $this['isFree'] = (boolean)$this['isFree'];
 
-        $validator = Validator::make($data, [
+        $validator = Validator::make($this->all(), [
             'isFree' => ['required', 'boolean'],
             'file' => 'required|file|max:2048',
             'group_id' => 'required|integer|exists:groups,id'
@@ -35,35 +37,40 @@ class FileAddRequest extends FormRequest
             $this->failedAuthorizationResponse('There is something wrong in some fields.');
         }
 
-        $group_id = $data['group_id'];
-        $file = $data['file'];
+        $group_id = $this['group_id'];
+        $file = $this['file'];
         $file_name = $file->getClientOriginalName();
-        $isFree = $data['isFree'];
-        $user_id = $data['user_id'];
+        $isFree = $this['isFree'];
+        $user_id = $this['user_id'];
 
-        $group = Group::find($group_id);
+        $group = GroupRepository::find($group_id);
         $files_in_the_same_group = $group->files->pluck('name')->toArray();
         if (in_array($file_name, $files_in_the_same_group)) {
             $this->failedAuthorizationResponse('There is file with the same name in this group.');
         }
 
         if (!$isFree) {
-            $user = User::find($user_id);
+            $user = UserRepository::find($user_id);
             if ($user === null) {
                 $this->failedAuthorizationResponse('There is no user with this id.');
             } else {
-                $is_exists = UserGroup::where('user_id', $user_id)
-                    ->where('group_id', $group_id)
-                    ->exists();
+                $conditions = [
+                    'user_id' => $user_id,
+                    'group_id' => $group_id
+                ];
+                $is_exists = UserGroupRepository::existsByConditions($conditions);
 
                 if (!$is_exists) {
                     $this->failedAuthorizationResponse('This user does not belong to this group.');
                 }
 
                 $user = Auth::user();
-                $is_exists = UserGroup::where('user_id', $user['id'])
-                    ->where('group_id', $group_id)
-                    ->exists();
+
+                $conditions = [
+                    'user_id' => $user['id'],
+                    'group_id' => $group_id
+                ];
+                $is_exists = UserGroupRepository::existsByConditions($conditions);
 
                 if (!$is_exists) {
                     $this->failedAuthorizationResponse('The logged-in user does not belong to this group.');

@@ -3,9 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Models\UserGroup;
+use App\Repositories\UserGroupRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FileGetRequest extends FormRequest
 {
@@ -14,6 +16,14 @@ class FileGetRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $validator = Validator::make($this->all(), [
+            'group_id' => 'required|integer|exists:groups,id',
+        ]);
+
+        if ($validator->fails()) {
+            $this->failedAuthorizationResponse('There is something wrong in some fields.');
+        }
+
         $user = Auth::user();
         $group_id = $this->input('group_id');
 
@@ -21,9 +31,11 @@ class FileGetRequest extends FormRequest
             $this->failedAuthorizationResponse("There is no group with this id.");
         }
 
-        $is_exists_user_group = UserGroup::where('user_id', $user->id)
-            ->where('group_id', $group_id)
-            ->exists();
+        $conditions = [
+            'user_id' => $user->id,
+            'group_id' => $group_id,
+        ];
+        $is_exists_user_group = UserGroupRepository::existsByConditions($conditions);
 
         if (!$is_exists_user_group) {
             $this->failedAuthorizationResponse("The logged in user does not belong to this group.");
@@ -40,7 +52,7 @@ class FileGetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'group_id' => 'required|integer|exists:groups,id',
+            //
         ];
     }
 

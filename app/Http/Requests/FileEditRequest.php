@@ -5,9 +5,12 @@ namespace App\Http\Requests;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\UserFile;
+use App\Repositories\FileRepository;
+use App\Repositories\UserFileRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FileEditRequest extends FormRequest
 {
@@ -16,6 +19,15 @@ class FileEditRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $validator = Validator::make($this->all(), [
+            'file' => 'required|file|max:2048',
+            'group_id' => 'required|integer|exists:groups,id'
+        ]);
+
+        if ($validator->fails()) {
+            $this->failedAuthorizationResponse('There is something wrong in some fields.');
+        }
+
         $data = $this->all();
         $user = Auth::user();
 
@@ -23,14 +35,17 @@ class FileEditRequest extends FormRequest
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
 
-        $file = File::where('name', $file_name)
-            ->where('group_id', $group_id)
-            ->where('isFree', false)
-            ->first();
+        $conditions = [
+            'group_id' => $group_id,
+            'isFree' => false
+        ];
+        $file = FileRepository::findByConditions($conditions);
         if ($file !== null) {
-            $user_file = UserFile::where('user_id', $user['id'])
-                ->where('file_id', $file['id'])
-                ->first();
+            $conditions = [
+                'user_id' => $user['id'],
+                'file_id' => $file['id']
+            ];
+            $user_file = UserFileRepository::findByConditions($conditions);
 
             if ($user_file === null) {
                 $this->failedAuthorizationResponse('The logged in user does not have this file');
@@ -50,8 +65,7 @@ class FileEditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|max:2048',
-            'group_id' => 'required|integer|exists:groups,id'
+            //
         ];
     }
 
