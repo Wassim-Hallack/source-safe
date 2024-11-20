@@ -56,4 +56,20 @@ class FileRepository
 
         return $record;
     }
+
+    static public function existsByConditions(array $conditions)
+    {
+        $query = File::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->exists();
+    }
 }

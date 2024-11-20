@@ -50,6 +50,7 @@ Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file
 
 Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->prefix('add_file_request')->group(function () {
     Route::get('get', 'get');
+    Route::post('response', 'response');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

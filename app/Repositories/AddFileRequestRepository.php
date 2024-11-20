@@ -26,4 +26,9 @@ class AddFileRequestRepository
     {
         $record->delete();
     }
+
+    static public function find($id)
+    {
+        return AddFileRequest::find($id);
+    }
 }

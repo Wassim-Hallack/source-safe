@@ -38,7 +38,7 @@ class AddFileRequestFactory extends Factory
                 $fileName = $this->faker->word . '.txt';
             }
         }
-        $filePath = "Add File Requests/" . $group['name'] . "/" . $fileName . "/1.txt";
+        $filePath = "Add File Requests/" . $group['name'] . "/" . $fileName;
         Storage::put($filePath, $fileContent);
 
         $isFree = $this->faker->boolean;

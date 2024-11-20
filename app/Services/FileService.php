@@ -38,10 +38,7 @@ class FileService
     public function add(File_add_Request $request)
     {
         $data = $request->all();
-        $logged_in_user = Auth::user();
-
-        $data['isFree'] = $data['isFree'][0];
-        $data['isFree'] = (boolean)$data['isFree'];
+        $logged_in_user = Auth::user();;
 
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
@@ -70,9 +67,8 @@ class FileService
                 FileRepository::create($file_data);
             }
         } else {
-            $file_path = 'Add File Requests/' . $group['name'] . "/" . $file_name;
-            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
-            $file->storeAs($file_path, "1." . $file_extension);
+            $file_path = 'Add File Requests/' . $group['name'];
+            $file->storeAs($file_path, $file_name);
 
             $add_file_request_data['group_id'] = $group_id;
             $add_file_request_data['name'] = $file_name;

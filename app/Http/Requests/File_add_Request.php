@@ -49,6 +49,11 @@ class File_add_Request extends FormRequest
             $this->failedAuthorizationResponse('There is file with the same name in this group.');
         }
 
+        $add_files_requests_in_the_same_group = $group->add_file_requests->pluck('name')->toArray();
+        if (in_array($file_name, $add_files_requests_in_the_same_group)) {
+            $this->failedAuthorizationResponse('There is add file request with the same name in this group.');
+        }
+
         if (!$isFree) {
             $user = UserRepository::find($user_id);
             if ($user === null) {

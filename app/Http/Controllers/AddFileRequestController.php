@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddFileRequest_get_Request;
+use App\Http\Requests\AddFileRequest_response_Request;
 use App\Models\AddFileRequest;
 use App\Repositories\AddFileRequestRepository;
 use App\Services\AddFileRequestService;
@@ -71,5 +72,9 @@ class AddFileRequestController extends Controller
     public function destroy(AddFileRequest $addFileRequest)
     {
         //
+    }
+
+    public function response(AddFileRequest_response_Request $request) {
+        return $this->addFileRequestService->response($request);
     }
 }
