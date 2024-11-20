@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GroupInvitation_create_Request;
+use App\Http\Requests\GroupInvitation_response_Request;
 use App\Http\Requests\GroupInvitationResponseRequest;
 use App\Models\GroupInvitation;
 use App\Services\GroupInvitationService;
@@ -18,7 +20,7 @@ class GroupInvitationController extends Controller
         $this->groupInvitationService = $groupInvitationService;
     }
 
-    public function invitation_response(GroupInvitationResponseRequest $request) {
+    public function invitation_response(GroupInvitation_response_Request $request) {
         return $this->logExecution(function () use ($request) {
             return $this->groupInvitationService->invitation_response($request);
         }, __FUNCTION__, $request->all());
@@ -37,7 +39,7 @@ class GroupInvitationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(GroupInvitation_create_Request $request)
     {
         return $this->groupInvitationService->create($request);
     }

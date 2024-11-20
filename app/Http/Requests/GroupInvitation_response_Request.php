@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\UserGroup;
-use App\Repositories\UserGroupRepository;
+use App\Models\GroupInvitation;
+use App\Repositories\GroupInvitationRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class FileGetRequest extends FormRequest
+class GroupInvitation_response_Request extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,27 +18,24 @@ class FileGetRequest extends FormRequest
     {
         $validator = Validator::make($this->all(), [
             'group_id' => 'required|integer|exists:groups,id',
+            'response' => 'required|boolean'
         ]);
 
         if ($validator->fails()) {
             $this->failedAuthorizationResponse('There is something wrong in some fields.');
         }
 
+        $group_id = $this['group_id'];
         $user = Auth::user();
-        $group_id = $this->input('group_id');
-
-        if ($group_id === null) {
-            $this->failedAuthorizationResponse("There is no group with this id.");
-        }
 
         $conditions = [
-            'user_id' => $user->id,
-            'group_id' => $group_id,
+            'user_id' => $user['id'],
+            'group_id' => $group_id
         ];
-        $is_exists_user_group = UserGroupRepository::existsByConditions($conditions);
+        $invitation = GroupInvitationRepository::findAllByConditions($conditions);
 
-        if (!$is_exists_user_group) {
-            $this->failedAuthorizationResponse("The logged in user does not belong to this group.");
+        if (!count($invitation)) {
+            $this->failedAuthorizationResponse('There is no invitation for this user to this group.');
         }
 
         return true;

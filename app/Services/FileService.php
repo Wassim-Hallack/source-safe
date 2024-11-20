@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Http\Requests\File_add_Request;
+use App\Http\Requests\File_destroy_Request;
+use App\Http\Requests\File_edit_Request;
+use App\Http\Requests\File_get_Request;
 use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileDestroyRequest;
 use App\Http\Requests\FileEditRequest;
@@ -20,7 +24,7 @@ use Illuminate\Support\Facades\File as LaravelFile;
 
 class FileService
 {
-    public function get(FileGetRequest $request)
+    public function get(File_get_Request $request)
     {
         $group_id = $request['group_id'];
         $files = GroupRepository::find($group_id)->files;
@@ -31,7 +35,7 @@ class FileService
         ], 200);
     }
 
-    public function add(FileAddRequest $request)
+    public function add(File_add_Request $request)
     {
         $data = $request->all();
         $logged_in_user = Auth::user();
@@ -92,7 +96,7 @@ class FileService
         ], 200);
     }
 
-    public function edit(FileEditRequest $request)
+    public function edit(File_edit_Request $request)
     {
         $data = $request->all();
         $user = Auth::user();
@@ -135,7 +139,7 @@ class FileService
         ]);
     }
 
-    public function destroy(FileDestroyRequest $request)
+    public function destroy(File_destroy_Request $request)
     {
         $file_id = $request['file_id'];
         $file = FileRepository::find($file_id);

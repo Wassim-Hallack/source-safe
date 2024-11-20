@@ -2,26 +2,23 @@
 
 namespace App\Http\Requests;
 
-use App\Models\GroupInvitation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
-class GroupInvitationResponseRequest extends FormRequest
+class Group_create_Request extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $group_id = $this['group_id'];
-        $user = Auth::user();
+        $validator = Validator::make($this->all(), [
+            'name' => ['required', 'max:250', 'unique:groups,name'],
+        ]);
 
-        $invitation = GroupInvitation::where('user_id', $user['id'])
-            ->where('group_id', $group_id)
-            ->get();
-        if (!count($invitation)) {
-            $this->failedAuthorizationResponse('There is no invitation for this user to this group.');
+        if ($validator->fails()) {
+            $this->failedAuthorizationResponse('There is something wrong with some fields.');
         }
 
         return true;
@@ -35,8 +32,7 @@ class GroupInvitationResponseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'group_id' => 'required|integer|exists:groups,id',
-            'response' => 'required|boolean'
+            //
         ];
     }
 

@@ -13,7 +13,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class FileAddRequest extends FormRequest
+class File_add_Request extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
