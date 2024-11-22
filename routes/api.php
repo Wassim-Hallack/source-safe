@@ -4,6 +4,7 @@ use App\Http\Controllers\AddFileRequestController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupInvitationController;
+use App\Http\Controllers\FileOperationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -46,11 +47,16 @@ Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file
     Route::post('add', 'add');
     Route::post('edit', 'edit');
     Route::delete('destroy', 'destroy');
+    Route::post('check_in', 'check_in');
 });
 
 Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->prefix('add_file_request')->group(function () {
     Route::get('get', 'get');
     Route::post('response', 'response');
+});
+
+Route::controller(FileOperationController::class)->middleware(['auth:api'])->prefix('file_operation')->group(function () {
+    Route::get('get_file_operations', 'get_file_operations');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

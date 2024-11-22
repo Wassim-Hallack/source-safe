@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\File_add_Request;
+use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
 use App\Http\Requests\File_edit_Request;
 use App\Http\Requests\File_get_Request;
@@ -50,5 +51,10 @@ class FileController extends Controller
         return $this->logExecution(function () use ($request) {
             return $this->fileService->destroy($request);
         }, __FUNCTION__, $request->all());
+    }
+
+    public function check_in(File_check_in_Request $request)
+    {
+        return $this->fileService->check_in($request);
     }
 }

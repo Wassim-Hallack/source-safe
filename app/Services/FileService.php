@@ -3,22 +3,15 @@
 namespace App\Services;
 
 use App\Http\Requests\File_add_Request;
+use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
 use App\Http\Requests\File_edit_Request;
 use App\Http\Requests\File_get_Request;
-use App\Http\Requests\FileAddRequest;
-use App\Http\Requests\FileDestroyRequest;
-use App\Http\Requests\FileEditRequest;
-use App\Http\Requests\FileGetRequest;
-use App\Models\File;
-use App\Models\Group;
-use App\Models\UserFile;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as LaravelFile;
 
@@ -120,7 +113,7 @@ class FileService
         $values = [
             'isFree' => true,
         ];
-        FileRepository::updateAttributes($file_record, $values);
+        FileRepository::update($file_record, $values);
 
         $path = storage_path('app\\Groups\\' . $group['name'] . '\\' . $file_name);
         $fileCount = count(LaravelFile::files($path));
@@ -146,5 +139,26 @@ class FileService
             'status' => true,
             'response' => 'The file deleted successfully.'
         ], 200);
+    }
+
+    public function check_in(File_check_in_Request $request)
+    {
+        $user = Auth::user();
+
+        foreach ($request['files'] as $file) {
+            $data = [
+                'user_id' => $user['id'],
+                'file_id' => $file['id']
+            ];
+            UserFileRepository::create($data);
+
+            $values = ['isFree' => 0];
+            FileRepository::update($file, $values);
+        }
+
+        return response()->json([
+            'status' => true,
+            'response' => "Files checked in successfully."
+        ]);
     }
 }

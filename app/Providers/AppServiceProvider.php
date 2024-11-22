@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
+use App\Repositories\FileOperationRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupInvitationRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
 use App\Services\AddFileRequestService;
 use App\Services\AddFileRequestToUserService;
+use App\Services\FileOperationService;
 use App\Services\FileService;
 use App\Services\GroupInvitationService;
 use App\Services\GroupService;
@@ -56,6 +58,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(AddFileRequestToUserService::class, function ($app) {
             return new AddFileRequestToUserService($app->make(AddFileRequestToUserRepository::class));
+        });
+
+        $this->app->bind(FileOperationService::class, function ($app) {
+            return new FileOperationService($app->make(FileOperationRepository::class));
         });
     }
 

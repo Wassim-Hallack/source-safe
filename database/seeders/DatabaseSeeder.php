@@ -6,6 +6,7 @@ namespace Database\Seeders;
 use App\Models\AddFileRequest;
 use App\Models\AddFileRequestToUser;
 use App\Models\File;
+use App\Models\FileOperation;
 use App\Models\Group;
 use App\Models\GroupFile;
 use App\Models\GroupInvitation;
@@ -71,5 +72,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+
+        FileOperation::factory(50)->create();
     }
 }

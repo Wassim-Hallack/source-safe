@@ -24,4 +24,9 @@ class File extends Model
     {
         return $this->belongsToMany(User::class, 'user_files');
     }
+
+    public function users_checked()
+    {
+        return $this->belongsToMany(User::class, 'file_operations');
+    }
 }

@@ -75,4 +75,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(File::class, 'user_files');
     }
+
+    public function files_checked()
+    {
+        return $this->belongsToMany(File::class, 'file_operations');
+    }
 }
