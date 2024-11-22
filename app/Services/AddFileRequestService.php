@@ -4,11 +4,8 @@ namespace App\Services;
 
 use App\Http\Requests\AddFileRequest_get_Request;
 use App\Http\Requests\AddFileRequest_response_Request;
-use App\Models\AddFileRequestToUser;
-use App\Models\Group;
-use App\Models\User;
 use App\Repositories\AddFileRequestRepository;
-use App\Repositories\AddFileRequestToUserRepository;
+use App\Repositories\FileOperationRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
@@ -54,13 +51,16 @@ class AddFileRequestService
             $file = FileRepository::create($data);
 
             if (!$file['isFree']) {
-                $to_user = $this['add_file_request']->user;
+                $to_user = $request['add_file_request']->user;
 
                 $data_2 = [
                     'user_id' => $to_user['id'],
                     'file_id' => $file['id']
                 ];
                 UserFileRepository::create($data_2);
+
+                $data_2['operation'] = 'check-in';
+                FileOperationRepository::create($data_2);
             }
         }
         else {

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\Group_create_Request;
+use App\Http\Requests\Group_users_in_group_Request;
 use App\Http\Requests\Group_users_out_group_Request;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserGroupRepository;
@@ -72,5 +73,15 @@ class GroupService
             'status' => true,
             'response' => $filtered_users,
         ], 200);
+    }
+
+    public function users_in_group(Group_users_in_group_Request $request)
+    {
+        $users = $request['group']->users_group_in;
+
+        return response()->json([
+            'status' => true,
+            'response' => $users
+        ]);
     }
 }

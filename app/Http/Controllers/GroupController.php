@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Group_create_Request;
+use App\Http\Requests\Group_users_in_group_Request;
 use App\Http\Requests\Group_users_out_group_Request;
 use App\Services\GroupService;
 use App\Traits\LogExecutionTrait;
@@ -38,6 +39,11 @@ class GroupController extends Controller
         return $this->logExecution(function () use ($request) {
             return $this->groupService->users_out_group($request);
         }, __FUNCTION__, $request->all());
+    }
+
+    public function users_in_group(Group_users_in_group_Request $request)
+    {
+        return $this->groupService->users_in_group($request);
     }
 
     public function invite_member(Request $request)

@@ -34,6 +34,7 @@ Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('gro
     Route::post('create', 'create');
     Route::get('get', 'get');
     Route::get('users_out_group', 'users_out_group');
+    Route::get('users_in_group', 'users_in_group');
 });
 
 Route::controller(GroupInvitationController::class)->middleware(['auth:api'])->prefix('group_invitation')->group(function () {

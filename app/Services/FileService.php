@@ -9,6 +9,7 @@ use App\Http\Requests\File_edit_Request;
 use App\Http\Requests\File_get_Request;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
+use App\Repositories\FileOperationRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
@@ -55,6 +56,9 @@ class FileService
                 $user_file_data['user_id'] = $user_id;
                 $user_file_data['file_id'] = $file_record['id'];
                 UserFileRepository::create($user_file_data);
+
+                $user_file_data['operation'] = 'check-in';
+                FileOperationRepository::create($user_file_data);
             } else {
                 $file_data['isFree'] = true;
                 FileRepository::create($file_data);
@@ -107,13 +111,19 @@ class FileService
             'file_id' => $file_record['id']
         ];
         $user_file = UserFileRepository::findByConditions($conditions);
-
         UserFileRepository::delete($user_file);
 
         $values = [
             'isFree' => true,
         ];
         FileRepository::update($file_record, $values);
+
+        $data = [
+            'user_id' => $user['id'],
+            'file_id' => $file_record['id'],
+            'operation' => 'check-out'
+        ];
+        FileOperationRepository::create($data);
 
         $path = storage_path('app\\Groups\\' . $group['name'] . '\\' . $file_name);
         $fileCount = count(LaravelFile::files($path));
@@ -151,6 +161,9 @@ class FileService
                 'file_id' => $file['id']
             ];
             UserFileRepository::create($data);
+
+            $data['operation'] = 'check-in';
+            FileOperationRepository::create($data);
 
             $values = ['isFree' => 0];
             FileRepository::update($file, $values);
