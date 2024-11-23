@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\File_add_Request;
 use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
+use App\Http\Requests\File_download_Request;
 use App\Http\Requests\File_edit_Request;
 use App\Http\Requests\File_get_Request;
 use App\Http\Requests\FileAddRequest;
@@ -56,5 +57,10 @@ class FileController extends Controller
     public function check_in(File_check_in_Request $request)
     {
         return $this->fileService->check_in($request);
+    }
+
+    public function download(File_download_Request $request)
+    {
+        return $this->fileService->download($request);
     }
 }

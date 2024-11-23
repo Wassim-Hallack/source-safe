@@ -49,6 +49,7 @@ Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file
     Route::post('edit', 'edit');
     Route::delete('destroy', 'destroy');
     Route::post('check_in', 'check_in');
+    Route::get('download', 'download');
 });
 
 Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->prefix('add_file_request')->group(function () {

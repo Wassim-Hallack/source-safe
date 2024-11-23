@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Requests\File_add_Request;
 use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
+use App\Http\Requests\File_download_Request;
 use App\Http\Requests\File_edit_Request;
 use App\Http\Requests\File_get_Request;
 use App\Repositories\AddFileRequestRepository;
@@ -15,6 +16,7 @@ use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as LaravelFile;
+use Illuminate\Support\Facades\Storage;
 
 class FileService
 {
@@ -173,5 +175,25 @@ class FileService
             'status' => true,
             'response' => "Files checked in successfully."
         ]);
+    }
+
+    public function download(File_download_Request $request)
+    {
+        $directory_path = storage_path('app/Groups/' . $request['group']['name'] . '/' . $request['file']['name']);
+        $fileCount = count(LaravelFile::files($directory_path));
+        $file_extension = pathinfo($directory_path, PATHINFO_EXTENSION);
+
+        $file_path = 'Groups/' . $request['group']['name'] . '/' . $request['file']['name'] . '/' . $fileCount . '.' . $file_extension;
+        if (Storage::exists($file_path)) {
+            $mimeType = Storage::mimeType($file_path) ?? 'application/octet-stream';
+            $sanitizedFileName  = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $request['file']['name']);
+
+            return response()->download(storage_path('app/' . $file_path), $sanitizedFileName, ['Content-Type' => $mimeType]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'response' => 'The file does not exist.'
+            ]);
+        }
     }
 }

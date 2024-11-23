@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Group;
+use App\Repositories\GroupRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +24,7 @@ class AddFileRequest_get_Request extends FormRequest
         }
 
         $this['user'] = Auth::user();
-        $this['group'] = Group::find($this['group_id']);
+        $this['group'] = GroupRepository::find($this['group_id']);
         if($this['user']['id'] !== $this['group']['user_id']) {
             return $this->failedAuthorizationResponse('The logged in user is not the admin of the group.');
         }
