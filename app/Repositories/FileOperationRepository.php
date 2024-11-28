@@ -78,4 +78,21 @@ class FileOperationRepository
 
         return $query->get();
     }
+
+    static public function getUserOperations(array $filters = [], array $relations = [])
+    {
+        $query = FileOperation::query();
+
+        if (isset($filters['group_id'])) {
+            $query->whereHas('file', function ($query) use ($filters) {
+                $query->where('group_id', $filters['group_id']);
+            });
+        }
+
+        if (!empty($relations)) {
+            $query->with($relations);
+        }
+
+        return $query->get();
+    }
 }

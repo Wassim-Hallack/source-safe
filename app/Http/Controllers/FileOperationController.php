@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FileOperation_get_file_operations_Request;
+use App\Http\Requests\FileOperation_get_user_operations_Request;
 use App\Models\FileOperation;
 use App\Services\FileOperationService;
 use Illuminate\Http\Request;
@@ -16,8 +17,14 @@ class FileOperationController extends Controller
         $this->fileOperationService = $fileOperationService;
     }
 
-    public function get_file_operations(FileOperation_get_file_operations_Request $request) {
+    public function get_file_operations(FileOperation_get_file_operations_Request $request)
+    {
         return $this->fileOperationService->get_file_operations($request);
+    }
+
+    public function get_user_operations(FileOperation_get_user_operations_Request $request)
+    {
+        return $this->fileOperationService->get_user_operations($request);
     }
 
     /**

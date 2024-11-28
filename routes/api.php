@@ -59,6 +59,7 @@ Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->pr
 
 Route::controller(FileOperationController::class)->middleware(['auth:api'])->prefix('file_operation')->group(function () {
     Route::get('get_file_operations', 'get_file_operations');
+    Route::get('get_user_operations', 'get_user_operations');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

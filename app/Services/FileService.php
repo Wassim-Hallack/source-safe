@@ -137,7 +137,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => 'The file updated successfully.'
-        ]);
+        ], 200);
     }
 
     public function destroy(File_destroy_Request $request)
@@ -174,7 +174,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => "Files checked in successfully."
-        ]);
+        ], 200);
     }
 
     public function download(File_download_Request $request)
@@ -186,14 +186,14 @@ class FileService
         $file_path = 'Groups/' . $request['group']['name'] . '/' . $request['file']['name'] . '/' . $fileCount . '.' . $file_extension;
         if (Storage::exists($file_path)) {
             $mimeType = Storage::mimeType($file_path) ?? 'application/octet-stream';
-            $sanitizedFileName  = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $request['file']['name']);
+            $sanitizedFileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $request['file']['name']);
 
             return response()->download(storage_path('app/' . $file_path), $sanitizedFileName, ['Content-Type' => $mimeType]);
         } else {
             return response()->json([
                 'status' => false,
                 'response' => 'The file does not exist.'
-            ]);
+            ], 200);
         }
     }
 }

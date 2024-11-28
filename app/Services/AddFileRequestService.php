@@ -72,6 +72,6 @@ class AddFileRequestService
         return response()->json([
             'status' => true,
             'response' => 'The file ' . ($request['response'] ? 'accepted' : 'rejected') . ' successfully.'
-        ]);
+        ], 200);
     }
 }
