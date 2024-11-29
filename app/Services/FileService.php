@@ -6,7 +6,9 @@ use App\Http\Requests\File_add_Request;
 use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
 use App\Http\Requests\File_download_Request;
+use App\Http\Requests\File_download_version_Request;
 use App\Http\Requests\File_edit_Request;
+use App\Http\Requests\File_get_file_versions_Request;
 use App\Http\Requests\File_get_Request;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
@@ -14,6 +16,7 @@ use App\Repositories\FileOperationRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
+use App\Repositories\UserGroupRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as LaravelFile;
 use Illuminate\Support\Facades\Storage;
@@ -186,14 +189,77 @@ class FileService
         $file_path = 'Groups/' . $request['group']['name'] . '/' . $request['file']['name'] . '/' . $fileCount . '.' . $file_extension;
         if (Storage::exists($file_path)) {
             $mimeType = Storage::mimeType($file_path) ?? 'application/octet-stream';
-            $sanitizedFileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $request['file']['name']);
+            $sanitizedFileName = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $request['file']['name']);
 
             return response()->download(storage_path('app/' . $file_path), $sanitizedFileName, ['Content-Type' => $mimeType]);
         } else {
             return response()->json([
                 'status' => false,
                 'response' => 'The file does not exist.'
-            ], 200);
+            ], 400);
+        }
+    }
+
+    public function get_file_versions(File_get_file_versions_Request $request)
+    {
+        $user = Auth::user();
+        $file = FileRepository::find($request['file_id']);
+        $group = $file->group;
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group['id'],
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+        if (!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'This user do not have access to this file.'
+            ], 400);
+        }
+
+
+        $directory_path = storage_path('app/Groups/' . $group['name'] . '/' . $file['name']);
+        $fileCount = count(LaravelFile::files($directory_path));
+
+        return response()->json([
+            'status' => true,
+            'response' => $fileCount
+        ]);
+    }
+
+    public function download_version(File_download_version_Request $request)
+    {
+        $user = Auth::user();
+        $file = FileRepository::find($request['file_id']);
+        $group = $file->group;
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group['id'],
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+        if (!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'This user do not have access to this file.'
+            ], 400);
+        }
+
+        $directory_path = storage_path('app/Groups/' . $group['name'] . '/' . $file['name']);
+        $file_extension = pathinfo($directory_path, PATHINFO_EXTENSION);
+
+        $file_path = 'Groups/' . $group['name'] . '/' . $file['name'] . '/' . $request['version_number'] . '.' . $file_extension;
+        if (Storage::exists($file_path)) {
+            $mimeType = Storage::mimeType($file_path) ?? 'application/octet-stream';
+            $sanitizedFileName = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $file['name']);
+
+            return response()->download(storage_path('app/' . $file_path), $sanitizedFileName, ['Content-Type' => $mimeType]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'response' => 'The file does not exist.'
+            ], 400);
         }
     }
 }

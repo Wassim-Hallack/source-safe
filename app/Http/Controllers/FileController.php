@@ -6,7 +6,9 @@ use App\Http\Requests\File_add_Request;
 use App\Http\Requests\File_check_in_Request;
 use App\Http\Requests\File_destroy_Request;
 use App\Http\Requests\File_download_Request;
+use App\Http\Requests\File_download_version_Request;
 use App\Http\Requests\File_edit_Request;
+use App\Http\Requests\File_get_file_versions_Request;
 use App\Http\Requests\File_get_Request;
 use App\Http\Requests\FileAddRequest;
 use App\Http\Requests\FileDestroyRequest;
@@ -62,5 +64,15 @@ class FileController extends Controller
     public function download(File_download_Request $request)
     {
         return $this->fileService->download($request);
+    }
+
+    public function get_file_versions(File_get_file_versions_Request $request)
+    {
+        return $this->fileService->get_file_versions($request);
+    }
+
+    public function download_version(File_download_version_Request $request)
+    {
+        return $this->fileService->download_version($request);
     }
 }

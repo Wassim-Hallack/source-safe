@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Repositories\GroupRepository;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class Group_users_in_group_Request extends FormRequest
+class File_download_version_Request extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,20 +15,13 @@ class Group_users_in_group_Request extends FormRequest
     public function authorize(): bool
     {
         $validator = Validator::make($this->all(), [
-            'group_id' => 'required|integer|exists:groups,id'
+            'file_id' => 'required|integer|exists:files,id',
+            'version_number' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
-            $this->failedAuthorizationResponse('There is something wrong in some fields.');
+            $this->failedAuthorizationResponse();
         }
-
-        $this['group'] = GroupRepository::find($this['group_id']);
-        $user = Auth::user();
-
-        if($this['group']['user_id'] !== $user['id']) {
-            $this->failedAuthorizationResponse('The logged-in user is not the admin of this group');
-        }
-
         return true;
     }
 
@@ -46,11 +37,11 @@ class Group_users_in_group_Request extends FormRequest
         ];
     }
 
-    private function failedAuthorizationResponse($message)
+    private function failedAuthorizationResponse()
     {
         throw new HttpResponseException(response()->json([
             'status' => false,
-            'response' => $message,
+            'response' => 'There is something wrong in some fields.',
         ], 400));
     }
 }
