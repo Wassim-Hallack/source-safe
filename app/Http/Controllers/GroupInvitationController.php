@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 class GroupInvitationController extends Controller
 {
     use LogExecutionTrait;
+
     protected $groupInvitationService;
 
     public function __construct(GroupInvitationService $groupInvitationService)
@@ -20,10 +21,9 @@ class GroupInvitationController extends Controller
         $this->groupInvitationService = $groupInvitationService;
     }
 
-    public function invitation_response(GroupInvitation_response_Request $request) {
-        return $this->logExecution(function () use ($request) {
-            return $this->groupInvitationService->invitation_response($request);
-        }, __FUNCTION__, $request->all());
+    public function invitation_response(GroupInvitation_response_Request $request)
+    {
+        return $this->groupInvitationService->invitation_response($request);
     }
 
     /**
@@ -31,9 +31,7 @@ class GroupInvitationController extends Controller
      */
     public function index()
     {
-        return $this->logExecution(function ()  {
             return $this->groupInvitationService->myInvitation();
-        }, __FUNCTION__);
     }
 
     /**

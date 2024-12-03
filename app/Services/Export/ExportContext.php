@@ -13,8 +13,8 @@ class ExportContext
         $this->exportStrategy = $exportStrategy;
     }
 
-    public function export(array $data)
+    public function export()
     {
-        return $this->exportStrategy->export($data);
+        return $this->exportStrategy->export();
     }
 }

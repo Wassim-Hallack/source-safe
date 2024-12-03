@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\UserService;
 use App\Traits\LogExecutionTrait;
 use Illuminate\Http\Request;
+
 class UserController extends Controller
 {
     use LogExecutionTrait;
@@ -18,29 +19,21 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->userService->register($request);
-        }, __FUNCTION__, $request->all());
+        return $this->userService->register($request);
     }
 
     public function login(Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->userService->login($request);
-        }, __FUNCTION__, $request->all());
+        return $this->userService->login($request);
     }
 
     public function refresh(Request $request)
     {
-        return $this->logExecution(function () {
-            return $this->userService->refresh();
-        }, __FUNCTION__);
+        return $this->userService->refresh();
     }
 
     public function logout()
     {
-        return $this->logExecution(function () {
-            return $this->userService->logout();
-        }, __FUNCTION__);
+        return $this->userService->logout();
     }
 }

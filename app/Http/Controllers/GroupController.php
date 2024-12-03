@@ -22,23 +22,17 @@ class GroupController extends Controller
 
     public function create(Group_create_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->groupService->create($request);
-        }, __FUNCTION__, $request->all());
+        return $this->groupService->create($request);
     }
 
     public function get()
     {
-        return $this->logExecution(function () {
-            return $this->groupService->get();
-        }, __FUNCTION__);
+        return $this->groupService->get();
     }
 
     public function users_out_group(Group_users_out_group_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->groupService->users_out_group($request);
-        }, __FUNCTION__, $request->all());
+        return $this->groupService->users_out_group($request);
     }
 
     public function users_in_group(Group_users_in_group_Request $request)
@@ -48,8 +42,6 @@ class GroupController extends Controller
 
     public function invite_member(Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->groupService->invite_member($request);
-        }, __FUNCTION__, $request->all());
+        return $this->groupService->invite_member($request);
     }
 }

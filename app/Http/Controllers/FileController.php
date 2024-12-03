@@ -30,30 +30,22 @@ class FileController extends Controller
 
     public function get(File_get_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->fileService->get($request);
-        }, __FUNCTION__, $request->all());
+        return $this->fileService->get($request);
     }
 
     public function add(File_add_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->fileService->add($request);
-        }, __FUNCTION__, $request->all());
+        return $this->fileService->add($request);
     }
 
     public function edit(File_edit_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->fileService->edit($request);
-        }, __FUNCTION__, $request->all());
+        return $this->fileService->edit($request);
     }
 
     public function destroy(File_destroy_Request $request)
     {
-        return $this->logExecution(function () use ($request) {
-            return $this->fileService->destroy($request);
-        }, __FUNCTION__, $request->all());
+        return $this->fileService->destroy($request);
     }
 
     public function check_in(File_check_in_Request $request)

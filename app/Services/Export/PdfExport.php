@@ -8,10 +8,21 @@ use Illuminate\Http\Response;
 
 class PdfExport implements ExportInterface
 {
-    public function export(array $data): Response
-    {
-        $pdf = Pdf::loadView('exports.PDF.file_operations', ['data' => $data]);
+    private string $blade_file_name;
+    private string $exported_file_name;
+    private array $data;
 
-        return $pdf->download('file_operations_report.pdf');
+    public function __construct($blade_file_name, $exported_file_name, $data)
+    {
+        $this->blade_file_name = $blade_file_name;
+        $this->exported_file_name = $exported_file_name;
+        $this->data = $data;
+    }
+
+    public function export(): Response
+    {
+        $pdf = Pdf::loadView('exports.PDF.' . $this->blade_file_name, ['data' => $this->data]);
+
+        return $pdf->download($this->exported_file_name . '.pdf');
     }
 }

@@ -19,7 +19,7 @@ class FileOperation_export_file_operations_Request extends FormRequest
     {
         $validator = Validator::make($this->all(), [
             'file_id' => 'required|integer|exists:files,id',
-            'export_type' => 'required|in:pdf'
+            'export_type' => 'required|in:pdf,csv'
         ]);
 
         if ($validator->fails()) {
