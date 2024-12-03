@@ -2,10 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\FileOperation\exportUserOperationsRequest;
-use App\Http\Requests\FileOperation_export_file_operations_Request;
-use App\Http\Requests\FileOperation_get_file_operations_Request;
-use App\Http\Requests\FileOperation_get_user_operations_Request;
 use App\Repositories\FileOperationRepository;
 use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
@@ -19,7 +15,7 @@ use InvalidArgumentException;
 
 class FileOperationService
 {
-    public function get_file_operations(FileOperation_get_file_operations_Request $request): JsonResponse
+    public function get_file_operations($request): JsonResponse
     {
         $conditions = [
             'file_id' => $request['file_id']
@@ -35,7 +31,7 @@ class FileOperationService
         ]);
     }
 
-    public function get_user_operations(FileOperation_get_user_operations_Request $request): JsonResponse
+    public function get_user_operations($request): JsonResponse
     {
         $user_operations = FileOperationRepository::getUserOperations(
             ['group_id' => $request['group_id']],
@@ -48,7 +44,7 @@ class FileOperationService
         ]);
     }
 
-    public function export_file_operations(FileOperation_export_file_operations_Request $request)
+    public function export_file_operations($request)
     {
         $file = FileRepository::find($request['file_id']);
         $group = $file->group;
@@ -98,7 +94,7 @@ class FileOperationService
         return $exportContext->export();
     }
 
-    public function export_user_operations(ExportUserOperationsRequest $request)
+    public function export_user_operations($request)
     {
         $group = GroupRepository::find($request['group_id']);
         if (!$group['is_owner']) {

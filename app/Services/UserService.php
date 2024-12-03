@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
-    public function register(Request $request)
+    public function register($request)
     {
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -47,7 +47,7 @@ class UserService
         ], 200);
     }
 
-    public function login(Request $request)
+    public function login($request)
     {
         $credentials = $request->only('email', 'password');
 

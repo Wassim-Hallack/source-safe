@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class AddFileRequestService
 {
-    public function get(AddFileRequest_get_Request $request)
+    public function get($request)
     {
         $add_file_requests = GroupRepository::find($request['group_id'])->add_file_requests;
         foreach ($add_file_requests as $add_file_request) {
@@ -34,7 +34,7 @@ class AddFileRequestService
         ], 200);
     }
 
-    public function response(AddFileRequest_response_Request $request)
+    public function response($request)
     {
         $old_path_file = 'Add File Requests/' . $request['group']['name'] . "/" . $request['add_file_request']['name'];
         if ($request['response']) {
@@ -62,8 +62,7 @@ class AddFileRequestService
                 $data_2['operation'] = 'check-in';
                 FileOperationRepository::create($data_2);
             }
-        }
-        else {
+        } else {
             Storage::delete($old_path_file);
         }
 

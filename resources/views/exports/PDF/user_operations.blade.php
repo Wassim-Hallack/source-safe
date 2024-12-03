@@ -29,7 +29,10 @@
 </head>
 <body>
 <h1>User Operations Report</h1>
-<p>Group Name: {{$data['group']['name']}} - <br> User Name: {{$data['user']['name']}} <br> Email: {{$data['user']['email']}}</p>
+<p>Group Name: {{$data['group']['name']}}
+    <br> User Name: {{$data['user']['name']}}
+    <br> Email: {{$data['user']['email']}}
+</p>
 <table>
     <thead>
     <tr>

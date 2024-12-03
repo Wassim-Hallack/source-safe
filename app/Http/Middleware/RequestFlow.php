@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class AopMiddleware
+class RequestFlow
 {
     /**
      * Handle an incoming request.
@@ -34,6 +34,10 @@ class AopMiddleware
             'url' => $request->fullUrl(),
             'method' => $request->method(),
             'user' => $request->user(),
+            'parameters' => [
+                'query' => $request->query(),
+                'body' => $request->except(['password', 'token']),
+            ],
         ]);
     }
 

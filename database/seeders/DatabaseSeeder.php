@@ -8,11 +8,9 @@ use App\Models\AddFileRequestToUser;
 use App\Models\File;
 use App\Models\FileOperation;
 use App\Models\Group;
-use App\Models\GroupFile;
 use App\Models\GroupInvitation;
 use App\Models\UserFile;
 use App\Models\UserGroup;
-use Database\Factories\GroupInvitationFactory;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -47,6 +45,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'wassim3',
             'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
         ]);
+
+        // Admin account
+        User::create([
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('123456'),
+            'name' => 'Admin',
+            'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
+        ]);
+
 
         Group::factory(10)->create();
         UserGroup::factory(15)->create();

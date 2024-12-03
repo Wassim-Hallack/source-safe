@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupService
 {
-    public function create(Group_create_Request $request)
+    public function create($request)
     {
         $user = Auth::user();
         $group_data['name'] = $request['name'];
@@ -47,7 +47,7 @@ class GroupService
         ], 200);
     }
 
-    public function users_out_group(Group_users_out_group_Request $request)
+    public function users_out_group($request)
     {
         $group_id = $request['group_id'];
         $group = GroupRepository::find($group_id);
@@ -75,7 +75,7 @@ class GroupService
         ], 200);
     }
 
-    public function users_in_group(Group_users_in_group_Request $request)
+    public function users_in_group($request)
     {
         $users = $request['group']->users_group_in;
 

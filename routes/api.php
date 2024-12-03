@@ -31,27 +31,30 @@ Route::controller(UserController::class)->middleware(['auth:api'])->group(functi
 });
 
 Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('group')->group(function () {
-    Route::post('create', 'create');
+    Route::post('create', 'create')->middleware('Transaction');
     Route::get('get', 'get');
     Route::get('users_out_group', 'users_out_group');
     Route::get('users_in_group', 'users_in_group');
 });
 
 Route::controller(GroupInvitationController::class)->middleware(['auth:api'])->prefix('group_invitation')->group(function () {
-    Route::post('create', 'create');
+    Route::post('create', 'create')->middleware('Transaction');;
     Route::post('invitation_response', 'invitation_response');
     Route::get('get', 'index');
 });
 
 Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file')->group(function () {
     Route::get('get', 'get');
-    Route::post('add', 'add');
-    Route::post('edit', 'edit');
-    Route::delete('destroy', 'destroy');
-    Route::post('check_in', 'check_in');
     Route::get('download', 'download');
     Route::get('get_file_versions', 'get_file_versions');
     Route::get('download_version', 'download_version');
+
+    Route::middleware(['RequestFlow', 'Transaction'])->group(function () {
+        Route::post('add', 'add');
+        Route::post('edit', 'edit');
+        Route::delete('destroy', 'destroy');
+        Route::post('check_in', 'check_in');
+    });
 });
 
 Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->prefix('add_file_request')->group(function () {
@@ -62,8 +65,11 @@ Route::controller(AddFileRequestController::class)->middleware(['auth:api'])->pr
 Route::controller(FileOperationController::class)->middleware(['auth:api'])->prefix('file_operation')->group(function () {
     Route::get('get_file_operations', 'get_file_operations');
     Route::get('get_user_operations', 'get_user_operations');
-    Route::get('export_file_operations','export_file_operations');
-    Route::get('export_user_operations','export_user_operations');
+
+    Route::middleware(['RequestFlow'])->group(function () {
+        Route::get('export_file_operations', 'export_file_operations');
+        Route::get('export_user_operations', 'export_user_operations');
+    });
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Storage;
 
 class FileService
 {
-    public function get(File_get_Request $request)
+    public function get($request)
     {
         $group_id = $request['group_id'];
         $files = GroupRepository::find($group_id)->files;
@@ -34,7 +34,7 @@ class FileService
         ], 200);
     }
 
-    public function add(File_add_Request $request)
+    public function add($request)
     {
         $data = $request->all();
         $logged_in_user = Auth::user();;
@@ -94,7 +94,7 @@ class FileService
         ], 200);
     }
 
-    public function edit(File_edit_Request $request)
+    public function edit($request)
     {
         $data = $request->all();
         $user = Auth::user();
@@ -143,7 +143,7 @@ class FileService
         ], 200);
     }
 
-    public function destroy(File_destroy_Request $request)
+    public function destroy($request)
     {
         $file_id = $request['file_id'];
         $file = FileRepository::find($file_id);
@@ -156,7 +156,7 @@ class FileService
         ], 200);
     }
 
-    public function check_in(File_check_in_Request $request)
+    public function check_in($request)
     {
         $user = Auth::user();
 
@@ -180,7 +180,7 @@ class FileService
         ], 200);
     }
 
-    public function download(File_download_Request $request)
+    public function download($request)
     {
         $directory_path = storage_path('app/Groups/' . $request['group']['name'] . '/' . $request['file']['name']);
         $fileCount = count(LaravelFile::files($directory_path));
@@ -200,7 +200,7 @@ class FileService
         }
     }
 
-    public function get_file_versions(File_get_file_versions_Request $request)
+    public function get_file_versions($request)
     {
         $user = Auth::user();
         $file = FileRepository::find($request['file_id']);
@@ -228,7 +228,7 @@ class FileService
         ]);
     }
 
-    public function download_version(File_download_version_Request $request)
+    public function download_version($request)
     {
         $user = Auth::user();
         $file = FileRepository::find($request['file_id']);

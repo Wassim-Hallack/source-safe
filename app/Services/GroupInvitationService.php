@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupInvitationService
 {
-    public function create(GroupInvitation_create_Request $request)
+    public function create($request)
     {
         $data['user_id'] = $request['user_id'];
         $data['group_id'] = $request['group_id'];
@@ -25,7 +25,7 @@ class GroupInvitationService
         ], 200);
     }
 
-    public function invitation_response(GroupInvitation_response_Request $request)
+    public function invitation_response($request)
     {
         $group_id = $request['group_id'];
         $response = $request['response'];
