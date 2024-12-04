@@ -2,14 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\File_add_Request;
-use App\Http\Requests\File_check_in_Request;
-use App\Http\Requests\File_destroy_Request;
-use App\Http\Requests\File_download_Request;
-use App\Http\Requests\File_download_version_Request;
-use App\Http\Requests\File_edit_Request;
-use App\Http\Requests\File_get_file_versions_Request;
-use App\Http\Requests\File_get_Request;
 use App\Repositories\AddFileRequestRepository;
 use App\Repositories\AddFileRequestToUserRepository;
 use App\Repositories\FileOperationRepository;
@@ -17,6 +9,7 @@ use App\Repositories\FileRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserFileRepository;
 use App\Repositories\UserGroupRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as LaravelFile;
 use Illuminate\Support\Facades\Storage;
@@ -25,6 +18,37 @@ class FileService
 {
     public function get($request)
     {
+        $group = GroupRepository::find($request['group_id']);
+        if ($group === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
+        $group_id = $request->input('group_id');
+
+        if ($group_id === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'There is no group with this id.'
+            ], 400);
+        }
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group_id,
+        ];
+        $is_exists_user_group = UserGroupRepository::existsByConditions($conditions);
+
+        if (!$is_exists_user_group) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged in user does not belong to this group.'
+            ], 400);
+        }
+
         $group_id = $request['group_id'];
         $files = GroupRepository::find($group_id)->files;
 
@@ -36,16 +60,77 @@ class FileService
 
     public function add($request)
     {
-        $data = $request->all();
-        $logged_in_user = Auth::user();;
+        $group = GroupRepository::find($request['group_id']);
+        if ($group === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
 
-        $file = $data['file'];
+        $group_id = $request['group_id'];
+        $file = $request['file'];
         $file_name = $file->getClientOriginalName();
-        $isFree = $data['isFree'];
-        $group_id = $data['group_id'];
-        $user_id = $data['user_id'];
+        $isFree = $request['isFree'];
+        $user_id = $request['user_id'];
 
+        $files_in_the_same_group = $group->files->pluck('name')->toArray();
+        if (in_array($file_name, $files_in_the_same_group)) {
+            return response()->json([
+                'status' => false,
+                'response' => 'There is file with the same name in this group.'
+            ], 400);
+        }
+
+        $add_files_requests_in_the_same_group = $group->add_file_requests->pluck('name')->toArray();
+        if (in_array($file_name, $add_files_requests_in_the_same_group)) {
+            return response()->json([
+                'status' => false,
+                'response' => 'There is add file request with the same name in this group.'
+            ], 400);
+        }
+
+        if (!$isFree) {
+            $user = UserRepository::find($user_id);
+            if ($user === null) {
+                return response()->json([
+                    'status' => false,
+                    'response' => 'There is no user with this id.'
+                ], 400);
+            } else {
+                $conditions = [
+                    'user_id' => $user_id,
+                    'group_id' => $group_id
+                ];
+                $is_exists = UserGroupRepository::existsByConditions($conditions);
+
+                if (!$is_exists) {
+                    return response()->json([
+                        'status' => false,
+                        'response' => 'This user does not belong to this group.'
+                    ], 400);
+                }
+
+                $user = Auth::user();
+
+                $conditions = [
+                    'user_id' => $user['id'],
+                    'group_id' => $group_id
+                ];
+                $is_exists = UserGroupRepository::existsByConditions($conditions);
+
+                if (!$is_exists) {
+                    return response()->json([
+                        'status' => false,
+                        'response' => 'The logged-in user does not belong to this group.'
+                    ], 400);
+                }
+            }
+        }
+
+        $logged_in_user = Auth::user();;
         $group = GroupRepository::find($group_id);
+
         if ($group['user_id'] === $logged_in_user['id']) {
             $file_path = 'Groups/' . $group['name'] . "/" . $file_name;
             $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
@@ -96,13 +181,44 @@ class FileService
 
     public function edit($request)
     {
+        $group = GroupRepository::find($request['group_id']);
+        if ($group === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
+
         $data = $request->all();
         $user = Auth::user();
-
         $group_id = $data['group_id'];
-        $group = GroupRepository::find($group_id);
         $file = $data['file'];
         $file_name = $file->getClientOriginalName();
+
+        $conditions = [
+            'group_id' => $group_id,
+            'isFree' => false
+        ];
+        $file = FileRepository::findByConditions($conditions);
+        if ($file !== null) {
+            $conditions = [
+                'user_id' => $user['id'],
+                'file_id' => $file['id']
+            ];
+            $user_file = UserFileRepository::findByConditions($conditions);
+
+            if ($user_file === null) {
+                return response()->json([
+                    'status' => false,
+                    'response' => 'The logged in user does not have this file.'
+                ], 400);
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'response' => 'There is no file with these attributes.'
+            ], 400);
+        }
 
         $conditions = [
             'name' => $file_name,
@@ -145,7 +261,25 @@ class FileService
 
     public function destroy($request)
     {
+        $file = FileRepository::find($request['file_id']);
+        if ($file === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
         $file_id = $request['file_id'];
+        $group = FileRepository::find($file_id)->group;
+
+        if ($group['user_id'] !== $user['id']) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user is not the admin of this group.'
+            ], 400);
+        }
+
         $file = FileRepository::find($file_id);
 
         FileRepository::delete($file);
@@ -158,6 +292,34 @@ class FileService
 
     public function check_in($request)
     {
+        foreach ($request['ids'] as $id) {
+            $file = FileRepository::find($id);
+            if ($file === null) {
+                return response()->json([
+                    'status' => false,
+                    'response' => 'Invalid file_id.'
+                ], 400);
+            }
+        }
+
+        $request['files'] = FileRepository::getFilesByIds($request['ids']);
+
+        $groupIds = $request['files']->pluck('group_id')->unique();
+        if ($groupIds->count() > 1) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The provided file IDs belong to different groups.'
+            ], 400);
+        }
+
+        $isAllFree = $request['files']->every(fn($file) => $file->isFree);
+        if (!$isAllFree) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Some files not free.'
+            ], 400);
+        }
+
         $user = Auth::user();
 
         foreach ($request['files'] as $file) {
@@ -182,6 +344,41 @@ class FileService
 
     public function download($request)
     {
+        $request['file'] = FileRepository::find($request['file_id']);
+        if ($request['file'] === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
+        $request['group'] = $request['file']->group;
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $request['group']['id']
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+        if (!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user does not belong to this group.'
+            ], 400);
+        }
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'file_id' => $request['file']['id']
+        ];
+        $is_exists = UserFileRepository::findByConditions($conditions);
+        if ($request['file']['isFree'] || !$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'This file did not checked in by this user.'
+            ], 400);
+        }
+
         $directory_path = storage_path('app/Groups/' . $request['group']['name'] . '/' . $request['file']['name']);
         $fileCount = count(LaravelFile::files($directory_path));
         $file_extension = pathinfo($directory_path, PATHINFO_EXTENSION);
@@ -202,8 +399,15 @@ class FileService
 
     public function get_file_versions($request)
     {
-        $user = Auth::user();
         $file = FileRepository::find($request['file_id']);
+        if ($file === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
         $group = $file->group;
 
         $conditions = [
@@ -230,8 +434,15 @@ class FileService
 
     public function download_version($request)
     {
-        $user = Auth::user();
         $file = FileRepository::find($request['file_id']);
+        if ($file === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
         $group = $file->group;
 
         $conditions = [

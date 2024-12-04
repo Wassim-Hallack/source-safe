@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Group_create_Request;
-use App\Http\Requests\Group_users_in_group_Request;
-use App\Http\Requests\Group_users_out_group_Request;
+use App\Http\Requests\Group\CreateRequest;
+use App\Http\Requests\Group\UsersInGroupRequest;
+use App\Http\Requests\Group\UsersOutGroupRequest;
 use App\Services\GroupService;
 use App\Traits\LogExecutionTrait;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class GroupController extends Controller
         $this->groupService = $groupService;
     }
 
-    public function create(Group_create_Request $request)
+    public function create(CreateRequest $request)
     {
         return $this->groupService->create($request);
     }
@@ -30,12 +30,12 @@ class GroupController extends Controller
         return $this->groupService->get();
     }
 
-    public function users_out_group(Group_users_out_group_Request $request)
+    public function users_out_group(UsersOutGroupRequest $request)
     {
         return $this->groupService->users_out_group($request);
     }
 
-    public function users_in_group(Group_users_in_group_Request $request)
+    public function users_in_group(UsersInGroupRequest $request)
     {
         return $this->groupService->users_in_group($request);
     }

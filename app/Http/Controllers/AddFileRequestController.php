@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddFileRequest_get_Request;
-use App\Http\Requests\AddFileRequest_response_Request;
+use App\Http\Requests\AddFile\ResponseRequest;
+use App\Http\Requests\AddFile\GetRequest;
 use App\Models\AddFileRequest;
-use App\Repositories\AddFileRequestRepository;
 use App\Services\AddFileRequestService;
 use Illuminate\Http\Request;
 
@@ -45,7 +44,7 @@ class AddFileRequestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function get(AddFileRequest_get_Request $request)
+    public function get(GetRequest $request)
     {
         return $this->addFileRequestService->get($request);
     }
@@ -74,7 +73,7 @@ class AddFileRequestController extends Controller
         //
     }
 
-    public function response(AddFileRequest_response_Request $request) {
+    public function response(ResponseRequest $request) {
         return $this->addFileRequestService->response($request);
     }
 }

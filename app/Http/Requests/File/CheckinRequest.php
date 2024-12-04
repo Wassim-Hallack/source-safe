@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Requests\FileOperation;
+namespace App\Http\Requests\File;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
 
-class ExportUserOperationsRequest extends FormRequest
+
+class CheckinRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +26,8 @@ class ExportUserOperationsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer',
-            'group_id' => 'required|integer',
-            'export_type' => 'required|in:pdf,csv'
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer',
         ];
     }
 

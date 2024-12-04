@@ -11,12 +11,37 @@ use App\Services\Export\CsvExport;
 use App\Services\Export\ExportContext;
 use App\Services\Export\PdfExport;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 
 class FileOperationService
 {
     public function get_file_operations($request): JsonResponse
     {
+        $file = FileRepository::find($request['file_id']);
+        if ($file === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
+        $group = $file->group;
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group['id']
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+
+        if(!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user is not in the file\'s group.'
+            ], 400);
+        }
+
         $conditions = [
             'file_id' => $request['file_id']
         ];
@@ -33,6 +58,41 @@ class FileOperationService
 
     public function get_user_operations($request): JsonResponse
     {
+        $user = UserRepository::find($request['user_id']);
+        if ($user === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid user_id.'
+            ], 400);
+        }
+
+        $group = GroupRepository::find($request['group_id']);
+        if ($group === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
+
+        if (!$group['is_owner']) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user is not the admin of this group.'
+            ], 400);
+        }
+
+        $conditions = [
+            'user_id' => $request['user_id'],
+            'group_id' => $request['group_id']
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+        if (!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'This user does not belong to this group.'
+            ], 400);
+        }
+
         $user_operations = FileOperationRepository::getUserOperations(
             ['group_id' => $request['group_id']],
             ['file:id,name']
@@ -47,7 +107,28 @@ class FileOperationService
     public function export_file_operations($request)
     {
         $file = FileRepository::find($request['file_id']);
+        if ($file === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid file_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
         $group = $file->group;
+
+        $conditions = [
+            'user_id' => $user['id'],
+            'group_id' => $group['id']
+        ];
+        $is_exists = UserGroupRepository::existsByConditions($conditions);
+
+        if(!$is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user is not in the file\'s group.'
+            ], 400);
+        }
 
         $conditions = [
             'file_id' => $request['file_id']
@@ -96,7 +177,22 @@ class FileOperationService
 
     public function export_user_operations($request)
     {
+        $user = UserRepository::find($request['user_id']);
+        if ($user === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid user_id.'
+            ], 400);
+        }
+
         $group = GroupRepository::find($request['group_id']);
+        if ($group === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
+
         if (!$group['is_owner']) {
             return response()->json([
                 'status' => false,
@@ -115,8 +211,6 @@ class FileOperationService
                 'response' => 'This user does not belong to this group.'
             ], 400);
         }
-
-        $user = UserRepository::find($request['user_id']);
 
         $user_operations = FileOperationRepository::getUserOperations(
             ['group_id' => $request['group_id']],

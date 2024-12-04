@@ -2,13 +2,9 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Group_create_Request;
-use App\Http\Requests\Group_users_in_group_Request;
-use App\Http\Requests\Group_users_out_group_Request;
 use App\Repositories\GroupRepository;
 use App\Repositories\UserGroupRepository;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GroupService
@@ -49,14 +45,12 @@ class GroupService
 
     public function users_out_group($request)
     {
-        $group_id = $request['group_id'];
-        $group = GroupRepository::find($group_id);
-
+        $group = GroupRepository::find($request['group_id']);
         if ($group === null) {
             return response()->json([
                 'status' => true,
                 'response' => [],
-            ], 200);
+            ]);
         }
 
         $all_users = UserRepository::get();
@@ -77,6 +71,23 @@ class GroupService
 
     public function users_in_group($request)
     {
+        $request['group'] = GroupRepository::find($request['group_id']);
+        if ($request['group'] === null) {
+            return response()->json([
+                'status' => false,
+                'response' => 'Invalid group_id.'
+            ], 400);
+        }
+
+        $user = Auth::user();
+
+        if ($request['group']['user_id'] !== $user['id']) {
+            return response()->json([
+                'status' => false,
+                'response' => 'The logged-in user is not the admin of this group.'
+            ], 400);
+        }
+
         $users = $request['group']->users_group_in;
 
         return response()->json([
