@@ -28,6 +28,8 @@ Route::controller(UserController::class)->group(function () {
 Route::controller(UserController::class)->middleware(['auth:api'])->group(function () {
     Route::post('refresh', 'refresh');
     Route::post('logout', 'logout');
+
+    Route::get('all_users', 'all_users')->middleware('Admin');
 });
 
 Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('group')->group(function () {

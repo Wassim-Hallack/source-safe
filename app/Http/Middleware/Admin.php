@@ -4,10 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
-class Transaction
+class Admin
 {
     /**
      * Handle an incoming request.
@@ -16,8 +15,13 @@ class Transaction
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return DB::transaction(function () use ($next, $request) {
+        if (auth()->check() && \App\Models\Admin::where('user_id', auth()->id())->exists()) {
             return $next($request);
-        });
+        }
+
+        return response()->json([
+            'status' => false,
+            'response' => 'Unauthorized. Admin access only.'
+        ], 403);
     }
 }

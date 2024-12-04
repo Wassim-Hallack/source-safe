@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\AddFileRequest;
 use App\Models\AddFileRequestToUser;
+use App\Models\Admin;
 use App\Models\File;
 use App\Models\FileOperation;
 use App\Models\Group;
@@ -47,11 +48,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Admin account
-        User::create([
+        $admin = User::create([
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123456'),
             'name' => 'Admin',
             'image' => 'https://th.bing.com/th/id/OIP.tHP9-Z5XX7fvzAjPnLgeXAHaLH?rs=1&pid=ImgDetMain',
+        ]);
+        Admin::create([
+            'user_id' => $admin['id']
         ]);
 
 

@@ -38,4 +38,20 @@ class UserRepository
 
         return $query?->groups_user_in;
     }
+
+    static public function findAllByConditions(array $conditions)
+    {
+        $query = User::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->get();
+    }
 }

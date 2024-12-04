@@ -26,6 +26,6 @@ class CsvExport implements ExportInterface
         }
         fclose($file);
 
-        return response()->download(storage_path('app/' . $fileName))->deleteFileAfterSend(true);
+        return response()->download(storage_path('app/' . $fileName))->deleteFileAfterSend();
     }
 }

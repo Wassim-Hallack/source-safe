@@ -36,4 +36,9 @@ class UserController extends Controller
     {
         return $this->userService->logout();
     }
+
+    public function all_users()
+    {
+        return $this->userService->all_users();
+    }
 }
