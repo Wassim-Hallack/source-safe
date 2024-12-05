@@ -4,15 +4,15 @@ namespace App\Providers;
 
 use App\Services\AddFileRequestService;
 use App\Services\AddFileRequestToUserService;
-use App\Services\AdminService;
+use App\Services\Admin\AdminService;
 use App\Services\FileOperationService;
 use App\Services\FileService;
 use App\Services\GroupInvitationService;
 use App\Services\GroupService;
 use App\Services\UserFileService;
 use App\Services\UserGroupService;
-use Illuminate\Support\ServiceProvider;
 use App\Services\UserService;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

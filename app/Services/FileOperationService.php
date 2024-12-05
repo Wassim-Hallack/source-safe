@@ -35,7 +35,7 @@ class FileOperationService
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
 
-        if(!$is_exists) {
+        if(!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not in the file\'s group.'
@@ -74,7 +74,7 @@ class FileOperationService
             ], 400);
         }
 
-        if (!$group['is_owner']) {
+        if (!$group['is_owner'] && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not the admin of this group.'
@@ -86,7 +86,7 @@ class FileOperationService
             'group_id' => $request['group_id']
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
-        if (!$is_exists) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'This user does not belong to this group.'
@@ -123,7 +123,7 @@ class FileOperationService
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
 
-        if(!$is_exists) {
+        if(!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not in the file\'s group.'
@@ -193,7 +193,7 @@ class FileOperationService
             ], 400);
         }
 
-        if (!$group['is_owner']) {
+        if (!$group['is_owner'] && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not the admin of this group.'
@@ -205,7 +205,7 @@ class FileOperationService
             'group_id' => $request['group_id']
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
-        if (!$is_exists) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'This user does not belong to this group.'

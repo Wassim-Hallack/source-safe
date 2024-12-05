@@ -24,7 +24,7 @@ class GroupService
         return response()->json([
             'status' => true,
             'response' => "Group created successfully.",
-        ], 200);
+        ]);
     }
 
     public function get()
@@ -40,7 +40,7 @@ class GroupService
         return response()->json([
             'status' => true,
             'response' => $groups,
-        ], 200);
+        ]);
     }
 
     public function users_out_group($request)
@@ -66,7 +66,7 @@ class GroupService
         return response()->json([
             'status' => true,
             'response' => $filtered_users,
-        ], 200);
+        ]);
     }
 
     public function users_in_group($request)
@@ -76,15 +76,6 @@ class GroupService
             return response()->json([
                 'status' => false,
                 'response' => 'Invalid group_id.'
-            ], 400);
-        }
-
-        $user = Auth::user();
-
-        if ($request['group']['user_id'] !== $user['id']) {
-            return response()->json([
-                'status' => false,
-                'response' => 'The logged-in user is not the admin of this group.'
             ], 400);
         }
 

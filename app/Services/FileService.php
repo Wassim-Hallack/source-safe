@@ -42,7 +42,7 @@ class FileService
         ];
         $is_exists_user_group = UserGroupRepository::existsByConditions($conditions);
 
-        if (!$is_exists_user_group) {
+        if (!$is_exists_user_group && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged in user does not belong to this group.'
@@ -55,7 +55,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => $files,
-        ], 200);
+        ]);
     }
 
     public function add($request)
@@ -128,7 +128,7 @@ class FileService
             }
         }
 
-        $logged_in_user = Auth::user();;
+        $logged_in_user = Auth::user();
         $group = GroupRepository::find($group_id);
 
         if ($group['user_id'] === $logged_in_user['id']) {
@@ -176,7 +176,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => 'The file saved successfully.'
-        ], 200);
+        ]);
     }
 
     public function edit($request)
@@ -256,7 +256,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => 'The file updated successfully.'
-        ], 200);
+        ]);
     }
 
     public function destroy($request)
@@ -281,13 +281,17 @@ class FileService
         }
 
         $file = FileRepository::find($file_id);
+        $directory_path = 'Groups/' . $group['name'] . '/' . $file['name'];
 
+        if (Storage::exists($directory_path)) {
+            Storage::deleteDirectory($directory_path);
+        }
         FileRepository::delete($file);
 
         return response()->json([
             'status' => true,
             'response' => 'The file deleted successfully.'
-        ], 200);
+        ]);
     }
 
     public function check_in($request)
@@ -339,7 +343,7 @@ class FileService
         return response()->json([
             'status' => true,
             'response' => "Files checked in successfully."
-        ], 200);
+        ]);
     }
 
     public function download($request)
@@ -360,22 +364,10 @@ class FileService
             'group_id' => $request['group']['id']
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
-        if (!$is_exists) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user does not belong to this group.'
-            ], 400);
-        }
-
-        $conditions = [
-            'user_id' => $user['id'],
-            'file_id' => $request['file']['id']
-        ];
-        $is_exists = UserFileRepository::findByConditions($conditions);
-        if ($request['file']['isFree'] || !$is_exists) {
-            return response()->json([
-                'status' => false,
-                'response' => 'This file did not checked in by this user.'
             ], 400);
         }
 
@@ -415,7 +407,7 @@ class FileService
             'group_id' => $group['id'],
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
-        if (!$is_exists) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'This user do not have access to this file.'
@@ -450,7 +442,7 @@ class FileService
             'group_id' => $group['id'],
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
-        if (!$is_exists) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'This user do not have access to this file.'
