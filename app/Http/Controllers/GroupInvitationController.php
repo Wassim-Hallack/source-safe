@@ -13,7 +13,7 @@ class GroupInvitationController extends Controller
 {
     use LogExecutionTrait;
 
-    protected $groupInvitationService;
+    protected GroupInvitationService $groupInvitationService;
 
     public function __construct(GroupInvitationService $groupInvitationService)
     {

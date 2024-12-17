@@ -70,4 +70,20 @@ class UserRepository
 
         return $query->first();
     }
+
+    static public function existsByConditions(array $conditions)
+    {
+        $query = User::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->exists();
+    }
 }

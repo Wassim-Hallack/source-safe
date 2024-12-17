@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -15,21 +14,15 @@ class UserService
 {
     public function register($request)
     {
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'name' => ['required', 'max:250'],
-            'email' => ['required', 'email', 'max:250', 'unique:users,email'],
-            'password' => ['required', 'max:250'],
-            'password_confirmation' => ['required', 'same:password']
-        ]);
-
-        if ($validator->fails()) {
+        $is_exist = UserRepository::existsByConditions(['email' => $request['email']]);
+        if ($is_exist) {
             return response()->json([
                 'status' => false,
-                'response' => 'There is something wrong with some fields.',
+                'response' => 'The email is not unique',
             ], 400);
         }
 
+        $data = $request->all();
 
 //        $image = $data['image'];
 //        $ext = $image->getClientOriginalExtension();

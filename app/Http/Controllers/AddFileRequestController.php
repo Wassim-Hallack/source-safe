@@ -52,7 +52,7 @@ class AddFileRequestController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AddFileRequest $addFileRequest)
+    public function edit(Request $request)
     {
         //
     }
@@ -68,7 +68,7 @@ class AddFileRequestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AddFileRequest $addFileRequest)
+    public function destroy(Request $request)
     {
         //
     }

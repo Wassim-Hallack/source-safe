@@ -13,7 +13,7 @@ class GroupController extends Controller
 {
     use LogExecutionTrait;
 
-    protected $groupService;
+    protected GroupService $groupService;
 
     public function __construct(GroupService $groupService)
     {
@@ -38,10 +38,5 @@ class GroupController extends Controller
     public function users_in_group(UsersInGroupRequest $request)
     {
         return $this->groupService->users_in_group($request);
-    }
-
-    public function invite_member(Request $request)
-    {
-        return $this->groupService->invite_member($request);
     }
 }

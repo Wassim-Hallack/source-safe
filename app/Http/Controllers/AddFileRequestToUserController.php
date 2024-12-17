@@ -42,7 +42,7 @@ class AddFileRequestToUserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AddFileRequestToUser $addFileRequestToUser)
+    public function show(Request $request)
     {
         //
     }
