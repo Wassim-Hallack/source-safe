@@ -13,4 +13,9 @@ class UserFile extends Model
         'user_id',
         'file_id'
     ];
+
+    public function file()
+    {
+        return $this->belongsTo(File::class);
+    }
 }

@@ -42,4 +42,20 @@ class UserFileRepository
 
         return $query->first();
     }
+
+    static public function findAllByConditions(array $conditions)
+    {
+        $query = UserFile::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->get();
+    }
 }
