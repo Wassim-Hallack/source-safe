@@ -16,13 +16,13 @@ class Transaction
      */
     public function handle(Request $request, Closure $next): Response
     {
-        DB::beginTransaction();
-        try {
-            $next($request);
-            DB::commit();
+//        DB::beginTransaction();
+//        try {
+            return $next($request);
+//            DB::commit();
 
-        }catch (\Throwable){
-            DB::rollBack();
-        }
+//        }catch (\Throwable){
+//            DB::rollBack();
+//        }
     }
 }

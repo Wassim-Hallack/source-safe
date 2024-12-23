@@ -12,7 +12,9 @@ class FileOperation extends Model
     protected $fillable = [
         'user_id',
         'file_id',
-        'operation'
+        'operation',
+        'current_version',
+        'comparison_result',
     ];
 
     public function user()

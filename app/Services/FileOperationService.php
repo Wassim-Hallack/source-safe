@@ -35,7 +35,7 @@ class FileOperationService
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
 
-        if(!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not in the file\'s group.'
@@ -123,7 +123,7 @@ class FileOperationService
         ];
         $is_exists = UserGroupRepository::existsByConditions($conditions);
 
-        if(!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
+        if (!$is_exists && (isset($request['isAdmin']) && !$request['isAdmin'])) {
             return response()->json([
                 'status' => false,
                 'response' => 'The logged-in user is not in the file\'s group.'
@@ -153,13 +153,15 @@ class FileOperationService
                 $data[] = ['File Name', $file['name']];
                 $data[] = [];
 
-                $data[] = ['Operation ID', 'Username', 'Operation Type', 'Created At'];
+                $data[] = ['Operation ID', 'Username', 'Operation Type', 'Current Version', 'Comparison Result', 'Created At'];
 
                 foreach ($file_operations as $operation) {
                     $data[] = [
                         $operation['id'],
                         $operation['user']['name'],
                         $operation['operation'],
+                        $operation['current_version'],
+                        $operation['comparison_result'],
                         $operation['created_at'],
                     ];
                 }
@@ -234,13 +236,15 @@ class FileOperationService
                 $data[] = ['User Email', $user['email']];
                 $data[] = [];
 
-                $data[] = ['Operation ID', 'File Name', 'Operation Type', 'Created At'];
+                $data[] = ['Operation ID', 'File Name', 'Operation Type', 'Current Version', 'Comparison Result', 'Created At'];
 
                 foreach ($user_operations as $operation) {
                     $data[] = [
                         $operation['id'],
                         $operation['file']['name'],
                         $operation['operation'],
+                        $operation['current_version'],
+                        $operation['comparison_result'],
                         $operation['created_at'],
                     ];
                 }

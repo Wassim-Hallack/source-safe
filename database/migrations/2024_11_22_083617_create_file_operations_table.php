@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('file_id')->constrained('files')->onDelete('cascade');
             $table->enum('operation', ['check-in', 'check-out']);
+            $table->integer('current_version')->nullable();
+            $table->string('comparison_result')->nullable();
             $table->timestamps();
         });
     }

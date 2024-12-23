@@ -11,6 +11,7 @@ use App\Repositories\UserFileRepository;
 use App\Repositories\UserGroupRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File as LaravelFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,7 +51,10 @@ class FileService
         }
 
         $group_id = $request['group_id'];
-        $files = GroupRepository::find($group_id)->files;
+
+        $files = Cache::remember(FileRepository::group_files_cache($group_id), now()->addDay(), function () use ($group_id) {
+            return GroupRepository::find($group_id)->files()->get();
+        });
 
         return response()->json([
             'status' => true,
@@ -199,11 +203,11 @@ class FileService
             'group_id' => $group_id,
             'isFree' => false
         ];
-        $file = FileRepository::findByConditions($conditions);
-        if ($file !== null) {
+        $file_record = FileRepository::findByConditions($conditions);
+        if ($file_record !== null) {
             $conditions = [
                 'user_id' => $user['id'],
-                'file_id' => $file['id']
+                'file_id' => $file_record['id']
             ];
             $user_file = UserFileRepository::findByConditions($conditions);
 
@@ -246,12 +250,59 @@ class FileService
         ];
         FileOperationRepository::create($data);
 
-        $path = storage_path('app\\Groups\\' . $group['name'] . '\\' . $file_name);
+        $path = storage_path('app/Groups/' . $group['name'] . '/' . $file_name);
         $fileCount = count(LaravelFile::files($path));
+        $current_version = $fileCount + 1;
 
         $path = 'Groups/' . $group['name'] . "/" . $file_name;
         $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
-        $file->storeAs($path, $fileCount . "." . $file_extension);
+
+        // Compare between the previous version and this version by Levenshtein Distance
+        $old_file_path = $path . '/' . $fileCount . '.' . $file_extension;
+        $old_file_content = Storage::get($old_file_path);
+        $new_file_content = $file->get();
+        $levenshtein_distance = levenshtein($old_file_content, $new_file_content);
+
+        // Get the number of lines and characters in the old file
+        $absolute_old_file_path = Storage::path($old_file_path);
+        $old_file_line_count = 0;
+        $old_file_character_count = 0;
+        $handle = fopen($absolute_old_file_path, 'r');
+        while (($line = fgets($handle)) !== false) {
+            $old_file_line_count++;
+            $old_file_character_count += strlen($line);
+        }
+        fclose($handle);
+
+        // Get the number of lines and characters in the new file
+        $new_file_line_count = 0;
+        $new_file_character_count = 0;
+        $handle = fopen($file->getPathname(), 'r');
+        while (($line = fgets($handle)) !== false) {
+            $new_file_line_count++;
+            $new_file_character_count += strlen($line);
+        }
+        fclose($handle);
+
+        // Format all comparison in one variable
+        $comparison_result = "Levenshtein Distance = " . $levenshtein_distance .
+            "\nNumber of lines: " .
+            "Previous version = " . $old_file_line_count . ", New version = " . $new_file_line_count .
+            "\nNumber of characters: " .
+            "Previous version = " . $old_file_character_count . ", New version = " . $new_file_character_count;
+
+
+        // Save file operation
+        $data = [
+            'user_id' => $user['id'],
+            'file_id' => $file_record['id'],
+            'operation' => 'check-out',
+            'current_version' => $current_version,
+            'comparison_result' => $comparison_result
+        ];
+        FileOperationRepository::create($data);
+
+        $file->storeAs($path, $current_version . "." . $file_extension);
 
         return response()->json([
             'status' => true,
@@ -259,7 +310,8 @@ class FileService
         ]);
     }
 
-    public function destroy($request)
+    public
+    function destroy($request)
     {
         $file = FileRepository::find($request['file_id']);
         if ($file === null) {
@@ -294,7 +346,8 @@ class FileService
         ]);
     }
 
-    public function check_in($request)
+    public
+    function check_in($request)
     {
         foreach ($request['ids'] as $id) {
             $file = FileRepository::find($id);
@@ -346,7 +399,8 @@ class FileService
         ]);
     }
 
-    public function download($request)
+    public
+    function download($request)
     {
         $request['file'] = FileRepository::find($request['file_id']);
         if ($request['file'] === null) {
@@ -389,7 +443,8 @@ class FileService
         }
     }
 
-    public function get_file_versions($request)
+    public
+    function get_file_versions($request)
     {
         $file = FileRepository::find($request['file_id']);
         if ($file === null) {
@@ -424,7 +479,8 @@ class FileService
         ]);
     }
 
-    public function download_version($request)
+    public
+    function download_version($request)
     {
         $file = FileRepository::find($request['file_id']);
         if ($file === null) {

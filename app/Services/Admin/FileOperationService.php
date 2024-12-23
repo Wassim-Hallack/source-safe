@@ -19,7 +19,7 @@ class FileOperationService
 
         $conditions = ['user_id' => $request['user_id']];
         $relations = ['file:id,name,group_id', 'file.group:id,name'];
-        $user_operations = FileOperationRepository::getByConditionsWithRelations($conditions, $relations);
+        $user_operations = FileOperationRepository::getByConditionsWithRelationsAndPagination($conditions, $relations);
 
         return response()->json([
             'status' => true,

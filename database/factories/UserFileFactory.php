@@ -27,7 +27,7 @@ class UserFileFactory extends Factory
             return [];
         }
 
-        $freeFile['isFree'] = true;
+        $freeFile['isFree'] = false;
         $freeFile->save();
 
 

@@ -39,6 +39,8 @@
         <th>Operation ID</th>
         <th>File Name</th>
         <th>Operation</th>
+        <th>Current Version</th>
+        <th>Comparison Result</th>
         <th>Created At</th>
     </tr>
     </thead>
@@ -48,6 +50,8 @@
             <td>{{ $operation['id'] }}</td>
             <td>{{ $operation['file']['name'] }}</td>
             <td>{{ $operation['operation'] }}</td>
+            <td>{{ $operation['current_version'] }}</td>
+            <td>{{ $operation['comparison_result'] }}</td>
             <td>{{ $operation['created_at'] }}</td>
         </tr>
     @endforeach

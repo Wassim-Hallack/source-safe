@@ -79,6 +79,21 @@ class FileOperationRepository
         return $query->get();
     }
 
+    static public function getByConditionsWithRelationsAndPagination(array $conditions = [], array $relations = [])
+    {
+        $query = FileOperation::query();
+
+        foreach ($conditions as $column => $value) {
+            $query->where($column, $value);
+        }
+
+        if (!empty($relations)) {
+            $query->with($relations);
+        }
+
+        return $query->paginate(5);
+    }
+
     static public function getUserOperations(array $filters = [], array $relations = [])
     {
         $query = FileOperation::query();

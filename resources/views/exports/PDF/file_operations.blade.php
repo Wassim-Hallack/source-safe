@@ -33,6 +33,8 @@
         <th>User Name</th>
         <th>User Email</th>
         <th>Operation</th>
+        <th>Current Version</th>
+        <th>Comparison Result</th>
         <th>Created At</th>
     </tr>
     </thead>
@@ -43,6 +45,8 @@
             <td>{{ $operation['user']['name'] }}</td>
             <td>{{ $operation['user']['email'] }}</td>
             <td>{{ $operation['operation'] }}</td>
+            <td>{{ $operation['current_version'] }}</td>
+            <td>{{ $operation['comparison_result'] }}</td>
             <td>{{ $operation['created_at'] }}</td>
         </tr>
     @endforeach
