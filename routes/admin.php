@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FileOperationController;
-use App\Http\Controllers\GroupController;
+use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 

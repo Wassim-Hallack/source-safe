@@ -3,12 +3,17 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class UserRepository
 {
+    protected static string $all_users_cache = 'all_users_cache';
+
     static public function get()
     {
-        return User::all();
+        return Cache::remember(self::$all_users_cache, now()->addDay(), function () {
+            return User::all();
+        });
     }
 
     static public function find($id)
@@ -18,17 +23,20 @@ class UserRepository
 
     static public function create($data)
     {
+        self::clearCache();
         return User::create($data);
     }
 
     static public function update($record, $data)
     {
+        self::clearCache();
         $record->update($data);
         return $record;
     }
 
     static public function delete($record)
     {
+        self::clearCache();
         $record->delete();
     }
 
@@ -85,5 +93,10 @@ class UserRepository
         }
 
         return $query->exists();
+    }
+
+    static protected function clearCache()
+    {
+        Cache::forget(self::$all_users_cache);
     }
 }

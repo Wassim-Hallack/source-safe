@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Repositories\FileRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class Group extends Model
 {
@@ -19,7 +21,9 @@ class Group extends Model
 
     public function files()
     {
-        return $this->hasMany(File::class);
+        return Cache::remember(FileRepository::group_files_cache($this['group_id']), now()->addDay(), function () {
+            return $this->hasMany(File::class);
+        });
     }
 
     // Return the admin of the group

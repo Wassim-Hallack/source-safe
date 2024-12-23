@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->boolean('isFree')->default(true);
             $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');
             $table->timestamps();
+
+            $table->index('group_id');
         });
     }
 
