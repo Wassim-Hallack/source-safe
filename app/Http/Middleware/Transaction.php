@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class Transaction
 {
@@ -16,13 +17,17 @@ class Transaction
      */
     public function handle(Request $request, Closure $next): Response
     {
-//        DB::beginTransaction();
-//        try {
-            return $next($request);
-//            DB::commit();
-
-//        }catch (\Throwable){
-//            DB::rollBack();
-//        }
+        DB::beginTransaction();
+        try {
+            $response = $next($request);
+            DB::commit();
+            return $response;
+        } catch (Throwable) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'The transaction failed.'
+            ], 400);
+        }
     }
 }

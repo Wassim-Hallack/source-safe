@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FileOperationController;
 use App\Http\Controllers\Admin\GroupController;
@@ -38,8 +39,10 @@ Route::controller(FileOperationController::class)->middleware(['auth:api'])->pre
     });
 });
 
-
 Route::controller(\App\Http\Controllers\Admin\FileOperationController::class)->middleware(['auth:api'])->prefix('file_operation')->group(function () {
     Route::get('get_all_user_operations', 'get_all_user_operations');
+    Route::get('export_all_user_operations', 'export_all_user_operations')->middleware('RequestFlow');
 });
+
+Route::get('get_log', [LogController::class, 'get_log'])->middleware(['auth:api']);
 

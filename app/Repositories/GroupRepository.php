@@ -44,4 +44,20 @@ class GroupRepository
     {
         Cache::forget(self::$all_groups_cache);
     }
+
+    static public function existsByConditions(array $conditions)
+    {
+        $query = Group::query();
+
+        foreach ($conditions as $column => $condition) {
+            if (is_array($condition) && count($condition) === 2) {
+                [$operator, $value] = $condition;
+                $query->where($column, $operator, $value);
+            } else {
+                $query->where($column, '=', $condition);
+            }
+        }
+
+        return $query->exists();
+    }
 }

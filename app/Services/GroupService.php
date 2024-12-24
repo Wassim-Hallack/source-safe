@@ -11,6 +11,14 @@ class GroupService
 {
     public function create($request)
     {
+        $is_exists = GroupRepository::existsByConditions(['name' => $request['name']]);
+        if ($is_exists) {
+            return response()->json([
+                'status' => false,
+                'response' => 'There is group with this name already.'
+            ], 400);
+        }
+
         $user = Auth::user();
         $group_data['name'] = $request['name'];
         $group_data['user_id'] = $user['id'];

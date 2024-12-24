@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Group;
+namespace App\Http\Requests\Admin\Log;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CreateRequest extends FormRequest
+class GetLogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:250',
+            'log_file_name' => 'required'
         ];
     }
 

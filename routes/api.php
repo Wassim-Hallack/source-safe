@@ -6,6 +6,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupInvitationController;
 use App\Http\Controllers\FileOperationController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -70,6 +71,22 @@ Route::controller(FileOperationController::class)->middleware(['auth:api'])->pre
         Route::get('export_file_operations', 'export_file_operations');
         Route::get('export_user_operations', 'export_user_operations');
     });
+});
+
+// Using by JMeter
+
+Route::get('get_user_id', function () {
+    $user = auth('api')->user();
+    return response()->json(['user_id' => $user->id ?? null]);
+})->middleware('auth:api');
+
+Route::get('get_group_id_by_user_id/{user_id}', function ($userId) {
+    $groupId = DB::table('user_groups')
+        ->where('user_id', $userId)
+        ->inRandomOrder()
+        ->value('group_id');
+
+    return response()->json(['group_id' => $groupId]);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
