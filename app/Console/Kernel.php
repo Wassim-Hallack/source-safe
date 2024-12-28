@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('UserFile:release-reserved-files')->everyMinute();
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**

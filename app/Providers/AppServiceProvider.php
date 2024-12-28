@@ -60,6 +60,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdminService::class, function () {
             return new AdminService();
         });
+
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**
