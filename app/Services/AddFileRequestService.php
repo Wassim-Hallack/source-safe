@@ -83,10 +83,10 @@ class AddFileRequestService
             ], 400);
         }
 
-        $old_path_file = 'Add File Requests/' . $group['name'] . "/" . $add_file_request['name'];
+        $old_path_file = 'Add File Requests' . DIRECTORY_SEPARATOR . $group['name'] . DIRECTORY_SEPARATOR . $add_file_request['name'];
         if ($request['response']) {
             $extension = pathinfo($old_path_file, PATHINFO_EXTENSION);
-            $new_path_file = 'Groups/' . $group['name'] . "/" . $add_file_request['name'] . "/1." . $extension;
+            $new_path_file = 'Groups' . DIRECTORY_SEPARATOR . $group['name'] . DIRECTORY_SEPARATOR . $add_file_request['name'] . DIRECTORY_SEPARATOR . "1." . $extension;
 
             Storage::move($old_path_file, $new_path_file);
 
