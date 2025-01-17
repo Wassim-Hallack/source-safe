@@ -5,6 +5,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupInvitationController;
 use App\Http\Controllers\FileOperationController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -52,7 +53,7 @@ Route::controller(FileController::class)->middleware(['auth:api'])->prefix('file
 
     Route::middleware(['RequestFlow', 'Transaction'])->group(function () {
         Route::post('add', 'add');
-        Route::post('edit', 'edit');
+        Route::post('edit', 'edit')->middleware('file.edit.notification');
         Route::delete('destroy', 'destroy');
         Route::post('check_in', 'check_in');
     });
@@ -72,6 +73,12 @@ Route::controller(FileOperationController::class)->middleware(['auth:api'])->pre
         Route::get('export_user_operations', 'export_user_operations');
     });
 });
+
+Route::controller(NotificationController::class)->middleware(['auth:api'])->prefix('notification')->group(function () {
+    Route::get('get', 'get');
+});
+
+
 
 // Using by JMeter
 

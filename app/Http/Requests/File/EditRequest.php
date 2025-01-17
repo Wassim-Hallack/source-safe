@@ -26,7 +26,7 @@ class EditRequest extends FormRequest
     {
         return [
             'file' => 'required|file|max:2048',
-            'group_id' => 'required|integer'
+            'group_id' => 'required|integer',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Notification\File\EditNotification;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -69,5 +70,6 @@ class Kernel extends HttpKernel
         'RequestFlow' => \App\Http\Middleware\RequestFlow::class,
         'Transaction' => \App\Http\Middleware\Transaction::class,
         'Admin' => \App\Http\Middleware\Admin::class,
+        'file.edit.notification' => \App\Http\Middleware\Notification\File\EditNotification::class,
     ];
 }

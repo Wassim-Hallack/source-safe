@@ -9,6 +9,7 @@ use App\Services\FileOperationService;
 use App\Services\FileService;
 use App\Services\GroupInvitationService;
 use App\Services\GroupService;
+use App\Services\NotificationService;
 use App\Services\UserFileService;
 use App\Services\UserGroupService;
 use App\Services\UserService;
@@ -59,6 +60,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(AdminService::class, function () {
             return new AdminService();
+        });
+
+        $this->app->bind(NotificationService::class, function () {
+            return new NotificationService();
         });
 
         if ($this->app->environment('local')) {

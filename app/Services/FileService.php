@@ -194,6 +194,7 @@ class FileService
         }
 
         $data = $request->all();
+
         $user = Auth::user();
         $group_id = $data['group_id'];
         $file = $data['file'];
@@ -303,6 +304,11 @@ class FileService
         FileOperationRepository::create($data);
 
         $file->storeAs($path, $current_version . "." . $file_extension);
+
+        // Handle request for middlewares
+        $request['user'] = $user;
+        $request['group'] = $group;
+        $request['file'] =  $file_record;
 
         return response()->json([
             'status' => true,

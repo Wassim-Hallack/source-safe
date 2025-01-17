@@ -51,6 +51,7 @@ class UserService
         }
 
         $user = Auth::user();
+        UserRepository::update($user, ['fcm_token' => $request['fcm_token']]);
 
         return response()->json([
             'status' => true,
