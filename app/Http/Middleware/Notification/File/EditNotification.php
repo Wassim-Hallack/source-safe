@@ -20,16 +20,16 @@ class EditNotification
         $response = $next($request);
 
         $title = 'File Check-out';
-        $description = $request['name'] . ' has checked out ' .
+        $description = $request['user']['name'] . ' has checked out ' .
             $request['file']['name'] . ' file in ' .
             $request['group']['name'] . ' group by ' . $request['user']['name'] . '.';
 
-        $users = $request['group']->users_group_in;
-        foreach ($users as $user) {
-            Notification::send($user['fcm_token'], $title, $description);
+        $users_group_in = $request['group']->users_group_in;
+        foreach ($users_group_in as $user_group_in) {
+            Notification::send($user_group_in['fcm_token'], $title, $description);
 
             $notification_record = [
-                'user_id' => $user['id'],
+                'user_id' => $user_group_in['id'],
                 'title' => $title,
                 'description' => $description
             ];

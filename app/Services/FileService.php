@@ -379,7 +379,7 @@ class FileService
         if (!$isAllFree) {
             return response()->json([
                 'status' => false,
-                'response' => 'Some files not free.'
+                'response' => 'Some files are not free.'
             ], 400);
         }
 
@@ -398,6 +398,10 @@ class FileService
             $values = ['isFree' => 0];
             FileRepository::update($file, $values);
         }
+
+        // Handle request for middlewares
+        $request['user'] = $user;
+        $request['group'] = GroupRepository::find($groupIds);
 
         return response()->json([
             'status' => true,
