@@ -19,6 +19,9 @@ Route::controller(UserController::class)->middleware(['auth:api'])->group(functi
 
 Route::controller(GroupController::class)->middleware(['auth:api'])->prefix('group')->group(function () {
     Route::get('get', 'get');
+});
+
+Route::controller(\App\Http\Controllers\GroupController::class)->middleware(['auth:api'])->prefix('group')->group(function () {
     Route::get('users_in_group', 'users_in_group');
 });
 
