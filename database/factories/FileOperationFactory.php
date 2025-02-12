@@ -3,12 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\File;
+use App\Models\FileOperation;
 use App\Models\UserFile;
 use App\Models\UserGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FileOperation>
+ * @extends Factory<FileOperation>
  */
 class FileOperationFactory extends Factory
 {

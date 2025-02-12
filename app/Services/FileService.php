@@ -80,14 +80,7 @@ class FileService
 
         $files_in_the_same_group = $group->files->pluck('name')->toArray();
         if (in_array($file_name, $files_in_the_same_group)) {
-
             return $this->edit($request);
-
-
-            return response()->json([
-                'status' => false,
-                'response' => 'There is file with the same name in this group.'
-            ], 400);
         }
 
         $add_files_requests_in_the_same_group = $group->add_file_requests->pluck('name')->toArray();
