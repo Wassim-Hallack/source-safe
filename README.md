@@ -88,11 +88,6 @@ We welcome contributions! If you'd like to improve this project, please:
 
 ---
 
-## 📄 License  
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.  
-
----
-
 ## 🔗 Connect With Us  
 💬 **Questions / Suggestions?** Feel free to open an issue or contribute!  
 
